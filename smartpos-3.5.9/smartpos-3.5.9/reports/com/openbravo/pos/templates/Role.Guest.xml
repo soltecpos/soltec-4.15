@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+ -->
+<permissions>
+    <class name="com.openbravo.pos.sales.JPanelTicketSales"/>
+    <class name="com.openbravo.pos.sales.JPanelTicketEdits"/>
+    <class name="sales.EditLines"/>
+    <class name="sales.DeleteLines"/>
+    <class name="sales.PrintRemote"/>
+    <class name="button.keyboard"/>
+</permissions>

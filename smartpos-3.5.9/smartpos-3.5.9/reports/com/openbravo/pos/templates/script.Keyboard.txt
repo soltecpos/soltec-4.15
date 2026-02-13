@@ -1,0 +1,16 @@
+// script.Keyboard.txt
+// This script launches SmartPOS Virtual Keyboard
+//
+//SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+
+// **************************************************************************
+
+Runtime runtime = Runtime.getRuntime();
+// Windows
+Process proc = runtime.getRuntime() .exec("cmd /C start osk.exe");
+
+// Ubuntu
+// Process proc = runtime.getRuntime() .exec("onboard");
+
+Runtime runtime = Runtime.getRuntime();
+Process proc = runtime.getRuntime() .exec("cmd /C start osk.exe");

@@ -1,0 +1,7 @@
+// ticket.addline
+// Use when you want to do something after a new line added in sales screen
+//
+//  # SmartPOS - Software de punto de venta touch - Creado por Alejandro Camargo retomando trabajo de código abierto de Openbravo y smartpos. Todos los derechos Reservados 
+// **************************************************************************
+
+//Your Code goes here

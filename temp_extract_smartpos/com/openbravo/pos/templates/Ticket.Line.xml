@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+
+ -->
+
+<!-- This sales transaction screen is great for Retailers! -->
+<line>
+    <column name="label.item" width="165" align="left" value="&lt;html&gt;
+	#if ($ticketline.isProductCom()) &lt;i&gt;*&amp;nbsp;&amp;nbsp;
+		${ticketline.printName()}&lt;/i&gt; 
+	#else 
+		${ticketline.printName()} 
+	#end
+	&lt;br&gt;${ticketline.getProductAttSetInstDesc()}"/>
+
+    <!--<column name="label.price" width="50" align="right" value="${ticketline.printPrice()}"/>-->
+    <column name="label.units" width="50" align="right" value="x${ticketline.printMultiply()}"/>
+    <column name="label.tax" width="50" align="right" value="${ticketline.printTaxRate()}"/>
+    <column name="label.value" width="100" align="right" value="${ticketline.printValue()}"/>
+    <column name="label.printto" width="5" align="center" value="${ticketline.printPrinter()}"/>
+<!--<column name="label.sendorder" width="5" align="left" value="${ticketline.getProperty('printkb','?')}"/> -->
+<!--<column name="label.sendstatus" width="5" align="left" value="${ticketline.getProperty('sendstatus','?')}"/> -->
+</line>
+
+<!-- This sales transaction screen is great for Hospitality!
+<line>
+    <column name="label.item2" width="335" align="left" value="&lt;html&gt;
+    #if ($ticketline.isProductCom()) 
+        &lt;i&gt;*&amp;nbsp;&amp;nbsp;${ticketline.printName()}&lt;/i&gt; 
+    #else 
+        ${ticketline.printName()} 
+    #end
+    &lt;br&gt;${ticketline.getProductAttSetInstDesc()}"/>
+    
+    <column name="label.units2" width="50" align="right" value="x${ticketline.printMultiply()}"/>
+    <column name="label.value2" width="50" align="right" value="${ticketline.printValue()}"/>
+    <column name="label.printto" width="5" align="center" value="${ticketline.printPrinter()}"/>    
+</line>
+ -->

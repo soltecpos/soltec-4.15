@@ -1,0 +1,12 @@
+// script.setPerson
+// Allows current Logged In User to another User account
+//
+//  # SmartPOS - Software de punto de venta touch - Creado por Alejandro Camargo retomando trabajo de código abierto de Openbravo y smartpos. Todos los derechos Reservados 
+// **************************************************************************
+
+value = javax.swing.JOptionPane.showInputDialog("Ingresa Reserva", ticket.getProperty("person")); 
+
+if (value != null) { 
+        ticket.setProperty("person", value); 
+
+}

@@ -1,0 +1,37 @@
+// script.ServiceCharge
+// SmartPOS 2020
+// Este script solicita valor de porcentaje de la propina para agregarla tomando en cuenta el valor antes de impuesto general del ticket.
+
+import com.openbravo.format.Formats;
+import com.openbravo.pos.ticket.TicketLineInfo;
+import com.openbravo.pos.ticket.TicketProductInfo;
+import java.util.Properties;
+
+scper = JOptionPane.showInputDialog(null, "Ingrese el porcentaje.....");
+//scper = "10";
+
+double scrate = Double.parseDouble(scper);
+scrate = scrate/100.00;
+
+total = ticket.getTotal(); 
+if (total > 0.0) { 
+	scval = Formats.PERCENT.formatValue(scrate); 
+
+	taxes = ticket.getTaxLines(); 
+	for (int i = 0; i < taxes.length; i++) { 
+		taxline = taxes[i]; 
+		ticket.insertLine(ticket.getLinesCount(),
+		new TicketLineInfo(
+			"Propina " + scper +"%",
+			"00",
+			"1",
+			1.0,
+			+taxline.getSubTotal() * scrate,
+		taxline.getTaxInfo()));
+	} 
+	sales.setSelectedIndex(ticket.getLinesCount() - 1);
+	ticket.setTip(taxline.getSubTotal() * scrate);
+} else { 
+    java.awt.Toolkit.getDefaultToolkit().beep();
+ticket.setTip(0.0);
+}

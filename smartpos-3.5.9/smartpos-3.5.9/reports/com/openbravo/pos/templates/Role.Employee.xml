@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+-->
+
+<!--
+	 Los permisos de rol de administrador tienen acceso completo a todos los dispositivos de SmartPOS
+     funcionalidad
+     La función de administrador solo debe utilizarse para realizar cambios en el sistema.
+     *** No cambie a menos que sepa lo que está haciendo ***
+-->
+
+<permissions>
+    <class name="com.openbravo.pos.customers.CustomersPayment"/>
+    <class name="com.openbravo.pos.sales.JPanelTicketSales"/>
+    <class name="com.openbravo.pos.sales.JPanelTicketEdits"/>
+
+    <class name="payment.cash"/>
+    <!--<class name="payment.magcard"/>-->
+    <class name="payment.bank"/>
+    <class name="payment.nequi"/>
+    <class name="payment.daviplata"/>
+    <class name="payment.tdebido"/>
+    <class name="payment.tcredito"/>
+    <class name="payment.tcredito"/>
+    <class name="payment.cheque"/>
+    <class name="payment.debt"/>
+    <class name="payment.free"/>
+    <class name="payment.slip"/>    
+    <class name="payment.voucher"/>
+
+    <class name="devolution.cash"/>
+    <class name="devolution.cheque"/>
+    <class name="devolution.magcard"/>
+    <class name="devolution.voucher"/>
+
+    <class name="sales.ChangeTaxOptions"/>
+    <class name="sales.ViewSharedTicket"/>
+
+    <class name="sales.DeleteLines"/>
+    <class name="sales.EditLines"/>
+
+    <class name="sales.Layout"/>    
+    <class name="sales.Override"/>
+    <class name="sales.PrintRemote"/>
+    <class name="sales.PrintTicket"/>
+    <class name="sales.devolutionTicket"/>
+    <class name="sales.ShowList"/>
+    <class name="sales.Total"/>
+    <class name="sales.ViewSharedTicket"/>
+
+<!-- Standard button scripts -->
+    <class name="button.opendrawer"/>
+    <class name="button.posapps"/>
+    <class name="button.print"/>
+    <class name="button.Totaldiscount"/>
+
+<!-- Additional button scripts -->
+    <class name="button.keyboard"/>    
+    <class name="button.Linediscount"/>
+    <class name="button.scharge"/>
+    <class name="button.sendorder"/>
+
+<class name="com.openbravo.pos.forms.MenuCustomers"/>
+    <class name="com.openbravo.pos.customers.CustomersPanel"/>
+            <class name="/com/openbravo/reports/customers.bs"/>
+            <class name="/com/openbravo/reports/customers_cards.bs"/>
+            <class name="/com/openbravo/reports/inventory_kardex.bs"/>
+            <class name="/com/openbravo/reports/inventory_kardexExt.bs"/>
+          <class name="com.openbravo.pos.forms.MenuSuppliers"/>
+          <class name="com.openbravo.pos.suppliers.SuppliersPanel"/>
+            <class name="/com/openbravo/reports/suppliers.bs"/>
+
+<class name="com.openbravo.pos.forms.MenuSalesManagement"/>
+            <class name="/com/openbravo/reports/sales_cashflow.bs"/>            
+            <class name="/com/openbravo/reports/sales_cashregisterlog.bs"/>
+            <class name="/com/openbravo/reports/sales_categorysales.bs"/> 
+            <class name="/com/openbravo/reports/sales_categorysales_1.bs"/>                        
+            <class name="/com/openbravo/reports/sales_closedpos.bs"/>
+            <class name="/com/openbravo/reports/sales_closedpos_1.bs"/>
+            <class name="/com/openbravo/reports/sales_closedproducts.bs"/>
+            <class name="/com/openbravo/reports/sales_closedproducts_1.bs"/>
+            <class name="/com/openbravo/reports/sales_extendedcashregisterlog.bs"/>
+            <class name="/com/openbravo/reports/sales_extproducts.bs"/>
+            <class name="/com/openbravo/reports/sales_payments.bs"/>
+            <class name="/com/openbravo/reports/sales_productsalesprofit.bs"/>
+            <class name="/com/openbravo/reports/sales_saletaxes.bs"/>
+            <class name="/com/openbravo/reports/sales_taxcatsales.bs"/>
+            <class name="/com/openbravo/reports/sales_taxes.bs"/>
+                        
+            <class name="/com/openbravo/reports/sales_chart_piesalescat.bs"/>
+            <class name="/com/openbravo/reports/sales_chart_productsales.bs"/>                        
+            <class name="/com/openbravo/reports/sales_chart_sales.bs"/>
+            <class name="/com/openbravo/reports/sales_chart_timeseriesproduct.bs"/>
+            <class name="/com/openbravo/reports/sales_chart_top10.bs"/>
+
+<!-- EPM -->
+    <class name="Menu.ChangePassword"/>
+    <class name="com.openbravo.pos.panels.JPanelPrinter"/>
+
+</permissions>

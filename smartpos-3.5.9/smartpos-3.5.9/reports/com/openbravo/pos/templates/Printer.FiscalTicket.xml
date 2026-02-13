@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+
+ -->
+<output>
+    <fiscalFactura>
+        #foreach ($ticketline in $ticket.getLines())
+            <!-- setting $vatinfo to the values contained in the fiscal printer vat table-->
+            #if (${ticketline.getTaxInfo().getRate()}==0.04)
+                    #set ($vatinfo ="1")
+            #elseif	(${ticketline.getTaxInfo().getRate()}==0.1)
+                    #set ($vatinfo ="2")	
+            #elseif (${ticketline.getTaxInfo().getRate()}==0.2)
+                    #set ($vatinfo ="3")
+            #else #set ($vatinfo ="1")
+            #end
+             #if ($ticketline.isProductCom()) 
+                 <line price="${ticketline.getValue()}" units="${ticketline.getMultiply()}" tax="${vatinfo}">*${ticketline.printName()}</line>
+             #else
+                 <line price="${ticketline.getValue()}" units="${ticketline.getMultiply()}" tax="${vatinfo}">${ticketline.printName()}</line>
+             #end
+        #end
+        <message>Ctd items: ${ticket.printArticlesCount()}</message>
+        #foreach ($paymentline in $ticket.payment)      
+         #if ($paymentline.name == "cash")
+            <Pagado Total="${paymentline.getPaid()}">Efectivo</total>
+         #end
+         #if ($paymentline.name == "cashdevolution")
+            <Pagado Total="${paymentline.getTotal()}">devolución</total>  
+         #end
+         #if ($paymentline.name == "ccard")
+            <Pagado Total="${paymentline.getTotal()}">Tarjeta</total>  
+         #end  
+         #if ($paymentline.name == "ccarddevolution")
+            <Pagado Total="${paymentline.getTotal()}">Tarjeta devolución</total>     
+         #end
+         #if ($paymentline.name == "cheque")
+            <Pagado Total="${paymentline.getTotal()}">Cheque</total>    
+         #end
+         #if ($paymentline.name == "chequedevolution")
+            <Pagado Total="${paymentline.getTotal()}">Cheque devolución</total>    
+         #end
+        #end 
+    </fiscalFactura>
+<!-- Other commands -->
+<!--
+    <fiscalzreport/>
+    <fiscalxreport/>
+-->    
+</output>

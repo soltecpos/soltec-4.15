@@ -1,0 +1,28 @@
+//SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+
+// **************************************************************************
+// Cash.Close
+// This script runs in the cash.close event
+
+        import java.awt.Font;
+        import javax.swing.plaf.FontUIResource;
+        import com.openbravo.pos.payment.PaymentInfo;
+        import javax.swing.JOptionPane;
+        import javax.swing.JDialog;
+        import java.awt.Window;
+
+
+
+        System.out.println("cash.close event!");
+        Window rootWindow ;
+
+        Window[] allWindows = Window.getWindows();
+
+        for (int i=0 ; i < allWindows.length; i++){
+        if (allWindows[i].getName().equals("frame0")){
+        rootWindow = (Window)allWindows[i];
+        }
+        }
+
+
+

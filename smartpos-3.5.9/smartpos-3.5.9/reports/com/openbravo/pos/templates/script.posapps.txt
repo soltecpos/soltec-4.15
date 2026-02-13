@@ -1,0 +1,24 @@
+// script.posapps.txt
+//
+//SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+// **************************************************************************
+// This script opens up the posapps settings / config screen
+
+import uk.co.pos_apps.PosApps;
+import java.awt.Window;
+
+//System.out.println("Run posapps!");
+
+Window rootWindow ;
+ 
+Window[] allWindows = Window.getWindows();
+ 
+for (int i=0 ; i < allWindows.length; i++){
+    if (allWindows[i].getName().equals("frame0")){
+                 rootWindow = (Window)allWindows[i];
+             }
+}
+ 
+//PosApps posApps = new PosApps();
+ 
+//posApps.init(ticket,dbURL,dbUser,dbPassword,rootWindow,"Settings");

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+SmartPOS - Punto de Venta Touch - Copyright Alejandro Camargo 2018 - (c) Unisen, OpenBravo, Chromun
+ -->
+ 
+<output>
+    <ticket>
+        <image>Printer.Ticket.Logo</image>
+        <line></line>
+        <line><text align="center" length="42">Sistema de Inventario</text></line>
+        <line><text align="center" length="42">Informe de Existencias</text></line>
+        <line></line>
+        <line><text align="center" bold="true" length="42">SmartPOS</text></line>
+        <line>
+            <text align ="left" bold="true" length="12">Fecha : </text>
+	<text align ="left" length="30">${inventoryrecord.printDate()}</text></line>
+        <line><text  align ="left" bold="true" length="12">Razón : </text>
+	<text align ="left" length="30">${inventoryrecord.printReason()}</text></line>
+        <line><text  align ="left" bold="true" length="12">Usuario : </text>
+	<text align ="left" length="30">${inventoryrecord.printUser()}</text></line>
+        <line><text  align ="left" bold="true" length="12">Almacén : </text>
+	<text align ="left" length="30">${inventoryrecord.printLocation()}</text></line>
+        <line><text  align ="left" bold="true" length="12">Proveedor : </text> 
+	<text align ="left" length="30">${inventoryrecord.printSupplier()}</text></line>
+        <line><text align ="left" bold="true" length="12">Documento : </text>
+	<text align ="left" length="30">${inventoryrecord.printSupplierDoc()}</text></line>
+
+        <line size="1">
+            #if ($inventoryrecord.isInput())
+                <text align ="center" bold="true" length="42">Entra</text>
+            #else
+                <text align ="center" bold="true" length="42">Sale</text>
+            #end
+        </line>
+        <line></line>    
+        <line>
+            <text align ="left" bold="true" length="17">Item</text>
+            <text align ="right" bold="true" length="10">Precio</text>
+            <text align ="right" bold="true" length="5">Ctd</text>
+            <text align ="right" bold="true" length="10">Valor</text>
+        </line>      
+        <line>
+            <text>------------------------------------------</text>
+        </line>   
+        #foreach ($inventoryline in $inventoryrecord.getLines())
+            <line>
+                <text align ="left" length="17">${inventoryline.printName()}</text>
+                <text align ="right" length="10">${inventoryline.printPrice()}</text>
+                <text align ="right" length="5">x${inventoryline.printMultiply()}</text>
+                <text align ="right" length="10">${inventoryline.printSubValue()}</text>
+            </line> 
+            #if ($inventoryline.productAttSetInstId)
+                <line><text align ="left" length="42">${inventoryline.productAttSetInstDesc}</text></line>
+            #end
+        #end
+        <line><text>------------------------------------------</text></line>   
+        <line></line>
+        <line>
+            <text align ="left" bold="true" length="27">Totales :</text>
+            <text align ="right" bold="true" length="5">${inventoryrecord.printTotalArticles()}</text>
+            <text align ="right" bold="true" length="10">${inventoryrecord.printSubTotal()}</text>
+        </line>
+        <line></line>            
+        <line><text align="center" length="42">Porfavor mantenga guardado este recibo</text></line>   
+    </ticket>
+</output>
