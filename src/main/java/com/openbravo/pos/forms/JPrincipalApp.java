@@ -129,16 +129,34 @@ implements AppUserView {
         this.m_jPanelContainer.add((Component)new JPanel(), "<NULL>");
         this.showView("<NULL>");
         try {
-            this.m_jPanelLeft.setViewportView(this.getScriptMenu(this.m_dlSystem.getResourceAsText("Menu.Root")));
+            String menuText = null;
+            try {
+                menuText = this.m_dlSystem.getResourceAsText("Menu.Root");
+            } catch (Exception e) {
+            }
+
+            if (menuText == null) {
+                 try {
+                     menuText = StringUtils.readResource("/com/openbravo/pos/templates/Menu.Root.txt");
+                 } catch (Exception ex) {
+                     logger.log(Level.SEVERE, "Cannot read default menu", ex);
+                 }
+            }
+
+            if (menuText != null) {
+                 // Parche para cambiar el icono de Impresoras a yast_printer.png
+                 if (menuText.contains("printer.png")) {
+                     menuText = menuText.replace("printer.png", "yast_printer.png");
+                 }
+                 // Additional safe replacement
+                 menuText = menuText.replaceAll("(\"[^\"]+\")(\\s*,\\s*\"printer\"\\s*,\\s*AppLocal\\.getIntString\\(\"Menu\\.Printer\"\\))", 
+                               "\"/com/openbravo/images/yast_printer.png\"$2");
+            }
+
+            this.m_jPanelLeft.setViewportView(this.getScriptMenu(menuText));
         }
         catch (ScriptException e) {
-            logger.log(Level.SEVERE, "Cannot read Menu.Root resource. Trying default menu.", e);
-            try {
-                this.m_jPanelLeft.setViewportView(this.getScriptMenu(StringUtils.readResource("/com/openbravo/pos/templates/Menu.Root.txt")));
-            }
-            catch (ScriptException | IOException ex) {
-                logger.log(Level.SEVERE, "Cannot read default menu", ex);
-            }
+            logger.log(Level.SEVERE, "Cannot read Menu.Root resource.", e);
         }
     }
 
@@ -289,7 +307,7 @@ implements AppUserView {
         this.jButton1.setFocusable(false);
         this.jButton1.setIconTextGap(0);
         this.jButton1.setMargin(new Insets(10, 2, 10, 2));
-        this.jButton1.setMaximumSize(new Dimension(45, 32224661));
+        this.jButton1.setMaximumSize(new Dimension(45, 45));
         this.jButton1.setMinimumSize(new Dimension(32, 32));
         this.jButton1.setPreferredSize(new Dimension(36, 45));
         this.jButton1.setRequestFocusEnabled(false);

@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
@@ -131,6 +132,33 @@ public class SOLTECTheme {
         // Use smooth scaling
         Image scaled = original.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
         return new ImageIcon(scaled);
+    }
+
+    public static void applyBorderlessButtonStyle(final JButton button) {
+        button.setOpaque(false);
+        button.setBackground(Color.WHITE);
+        button.setBorder(null);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setForeground(Color.BLACK);
+        button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                if (button.isEnabled()) {
+                    button.setContentAreaFilled(true);
+                    button.setBackground(new Color(245, 245, 245));
+                    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+            }
+            public void mouseExited(MouseEvent evt) {
+                button.setContentAreaFilled(false);
+                button.setBackground(Color.WHITE);
+            }
+        });
     }
 
     public static void applyModernButtonStyle(final JButton button) {

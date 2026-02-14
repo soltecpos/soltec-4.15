@@ -190,7 +190,7 @@ implements ReportEditorCreator {
                 BundleFilter.this.m_jBarcode1ActionPerformed(evt);
             }
         });
-        this.Enter2.setIcon(new ImageIcon(this.getClass().getResource("/com/openbravo/images/barcode.png")));
+        this.Enter2.setIcon(com.openbravo.pos.plaf.SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/barcode.png"), 24, 24));
         this.Enter2.setToolTipText("Get Barcode");
         this.Enter2.setPreferredSize(new Dimension(80, 45));
         this.Enter2.addActionListener(new ActionListener(){

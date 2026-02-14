@@ -682,7 +682,7 @@ implements JPanelView {
         });
         this.jPanel8.add((Component)this.m_jcodebar, new AbsoluteConstraints(780, 270, -1, -1));
         this.m_jEnter.setFont(new Font("Arial", 0, 14));
-        this.m_jEnter.setIcon(new ImageIcon(this.getClass().getResource("/com/openbravo/images/barcode.png")));
+        this.m_jEnter.setIcon(com.openbravo.pos.plaf.SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/barcode.png"), 24, 24));
         this.m_jEnter.setFocusPainted(false);
         this.m_jEnter.setFocusable(false);
         this.m_jEnter.setPreferredSize(new Dimension(54, 45));

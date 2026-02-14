@@ -191,7 +191,8 @@ extends JTicketsBag {
             }
         });
         SOLTECTheme.applyIconButtonStyle(this.m_jNewTicket);
-        this.m_jDelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/sale_delete.png"), 55, 55));
+        // CAMBIO DE ICONO: eliminarpedidoactual.png (Solicitado por usuario - v2)
+        this.m_jDelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/eliminarpedidoactual.png"), 55, 55));
         this.m_jDelTicket.setToolTipText(bundle.getString("tooltip.delete"));
         SOLTECTheme.applyIconButtonStyle(this.m_jDelTicket);
         this.m_jDelTicket.setPreferredSize(new Dimension(90, 70));

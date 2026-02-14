@@ -58,6 +58,8 @@ import com.openbravo.pos.sales.JDialogCreateProduct;
 import com.openbravo.pos.sales.JMooringDetails;
 import com.openbravo.pos.sales.JPanelButtons;
 import com.openbravo.pos.sales.JProductAttEdit2;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import com.openbravo.pos.sales.JProductLineEdit;
 import com.openbravo.pos.sales.JTicketLines;
 import com.openbravo.pos.sales.JTicketsBag;
@@ -1784,7 +1786,8 @@ TicketsEditor {
         m_jOptionsRight.setOpaque(true);
         Dimension dimBtn = new Dimension(55, 55);
         this.m_jPanelBag.setBackground(Color.WHITE);
-        this.m_jPanelBag.setPreferredSize(new Dimension(250, 75));
+        // Aumentar contenedor padre para evitar cortes en botones con texto
+        this.m_jPanelBag.setPreferredSize(new Dimension(300, 95));
         m_jOptionsLeft.add(this.m_jPanelBag);
         Dimension dimSearch = new Dimension(190, 55);
         Border roundedBorder = BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true);
@@ -1865,15 +1868,19 @@ TicketsEditor {
         pnlProductSearch.add(this.cbProductSearch, "Center");
         m_jOptionsLeft.add(pnlProductSearch);
         m_jOptionsLeft.add(this.btnCreateProduct);
-        this.btnCreateCustomer.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/customer_add.png"), 32, 32));
-        if (this.btnCreateCustomer.getIcon() == null) {
-            this.btnCreateCustomer.setText("+");
-        }
+        
+        // BOTÓN AGREGAR CLIENTE (Gigante + Texto)
+        Dimension dimGiantBtn = new Dimension(90, 85);
+        this.btnCreateCustomer.setFont(new Font("Arial", Font.BOLD, 10));
+        this.btnCreateCustomer.setText("Cliente");
+        this.btnCreateCustomer.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/agregarcliente.png"), 55, 55));
         this.btnCreateCustomer.setToolTipText(AppLocal.getIntString("label.customercreate"));
         this.btnCreateCustomer.setBackground(Color.WHITE);
-        this.btnCreateCustomer.setPreferredSize(dimBtn);
-        this.btnCreateCustomer.setMinimumSize(dimBtn);
-        this.btnCreateCustomer.setMaximumSize(dimBtn);
+        this.btnCreateCustomer.setVerticalTextPosition(JButton.BOTTOM);
+        this.btnCreateCustomer.setHorizontalTextPosition(JButton.CENTER);
+        this.btnCreateCustomer.setPreferredSize(dimGiantBtn);
+        this.btnCreateCustomer.setMinimumSize(dimGiantBtn);
+        this.btnCreateCustomer.setMaximumSize(dimGiantBtn);
         SOLTECTheme.applyIconButtonStyle(this.btnCreateCustomer);
         this.btnCreateCustomer.addActionListener(new ActionListener(){
 
@@ -1939,58 +1946,74 @@ TicketsEditor {
         pnlCustomerSearch.add(this.cbCustomerSearch, "Center");
         m_jOptionsLeft.add(pnlCustomerSearch);
         m_jOptionsLeft.add(this.btnCreateCustomer);
-        this.btnReprint1.setFont(new Font("Arial", 0, 12));
-        this.btnReprint1.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/reprintlast.png"), 40, 40));
+        
+        m_jOptionsLeft.add(this.btnCreateCustomer);
+        
+        // Ajuste masivo: Iconos GIGANTES (55px) + TEXTO debajo
+        // Dimensiones aumentadas a 90x90 para caber texto
+        Dimension dimTopBtn = new Dimension(90, 85); 
+        
+        // Botón Reimprimir Último Ticket
+        this.btnReprint1.setFont(new Font("Arial", Font.BOLD, 10)); // Fuente pequeña para que quepa
+        this.btnReprint1.setText("Reimprimir");
+        this.btnReprint1.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/printer.png"), 55, 55));
         this.btnReprint1.setBackground(Color.WHITE);
         this.btnReprint1.setToolTipText(AppLocal.getIntString("tooltip.reprintLastTicket"));
-        this.btnReprint1.setFocusPainted(false);
-        this.btnReprint1.setFocusable(false);
-        this.btnReprint1.setMargin(new Insets(2, 2, 2, 2));
-        this.btnReprint1.setPreferredSize(dimBtn);
-        this.btnReprint1.setMinimumSize(dimBtn);
-        this.btnReprint1.setMaximumSize(dimBtn);
-        this.btnReprint1.setRequestFocusEnabled(false);
         SOLTECTheme.applyIconButtonStyle(this.btnReprint1);
+        this.btnReprint1.setVerticalTextPosition(JButton.BOTTOM);
+        this.btnReprint1.setHorizontalTextPosition(JButton.CENTER);
+        this.btnReprint1.setPreferredSize(dimTopBtn);
         this.btnReprint1.addActionListener(new ActionListener(){
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 JPanelTicket.this.btnReprint1ActionPerformed(evt);
             }
         });
         m_jOptionsLeft.add(this.btnReprint1);
-        this.btnSplit.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/splitticket.png"), 40, 40));
+        
+        // Botón Dividir Cuenta
+        this.btnSplit.setFont(new Font("Arial", Font.BOLD, 10));
+        this.btnSplit.setText("Dividir");
+        this.btnSplit.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/splitticket.png"), 55, 55));
         this.btnSplit.setBackground(Color.WHITE);
         this.btnSplit.setToolTipText(AppLocal.getIntString("tooltip.salesplit"));
         this.btnSplit.setEnabled(false);
         this.btnSplit.setFocusPainted(false);
         this.btnSplit.setFocusable(false);
         this.btnSplit.setMargin(new Insets(2, 2, 2, 2));
-        this.btnSplit.setPreferredSize(dimBtn);
-        this.btnSplit.setMinimumSize(dimBtn);
-        this.btnSplit.setMaximumSize(dimBtn);
+        this.btnSplit.setPreferredSize(dimTopBtn);
+        this.btnSplit.setMinimumSize(dimTopBtn);
+        this.btnSplit.setMaximumSize(dimTopBtn);
         this.btnSplit.setRequestFocusEnabled(false);
         SOLTECTheme.applyIconButtonStyle(this.btnSplit);
+        this.btnSplit.setVerticalTextPosition(JButton.BOTTOM);
+        this.btnSplit.setHorizontalTextPosition(JButton.CENTER);
         this.btnSplit.addActionListener(new ActionListener(){
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 JPanelTicket.this.btnSplitActionPerformed(evt);
             }
         });
         m_jOptionsLeft.add(this.btnSplit);
-        this.j_btnRemotePrt.setIcon(safeIcon("/com/openbravo/pos/images/icon_kitchen_print_modern.png"));
+        
+        // Botón Impresión Remota / Cocina
+        this.j_btnRemotePrt.setFont(new Font("Arial", Font.BOLD, 10));
+        this.j_btnRemotePrt.setText("Cocina");
+        this.j_btnRemotePrt.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/icon_kitchen_print_modern.png"), 55, 55));
         this.j_btnRemotePrt.setToolTipText(AppLocal.getIntString("button.toremote"));
         SOLTECTheme.applyIconButtonStyle(this.j_btnRemotePrt);
-        this.j_btnRemotePrt.setPreferredSize(new Dimension(55, 55));
-        this.j_btnRemotePrt.addActionListener(new ActionListener(){
+        this.j_btnRemotePrt.setVerticalTextPosition(JButton.BOTTOM);
+        this.j_btnRemotePrt.setHorizontalTextPosition(JButton.CENTER);
+        this.j_btnRemotePrt.setPreferredSize(dimTopBtn);
 
+        this.j_btnRemotePrt.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent evt) {
                 JPanelTicket.this.j_btnRemotePrtActionPerformed(evt);
             }
         });
-        m_jOptionsRight.add(this.j_btnRemotePrt);
+        m_jOptionsLeft.add(this.j_btnRemotePrt); // Agregado al panel IZQUIERDO
+
         this.lblScaleDisplay = new JLabel();
         Dimension dimScale = new Dimension(100, 55);
         this.lblScaleDisplay.setPreferredSize(dimScale);
@@ -2033,14 +2056,23 @@ TicketsEditor {
         this.m_jPanTicket.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.m_jPanTicket.setLayout(new BorderLayout());
         this.jPanel5.setLayout(new BorderLayout());
-        this.jPanel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        this.jPanel2.setPreferredSize(new Dimension(95, 0));
-        this.jPanel2.setLayout(new GridLayout(0, 1, 0, 5));
-        this.m_jDelete.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/deletelineticket.png"), 40, 40));
+        // JScrollPane para permitir scroll de los botones laterales
+        JScrollPane scrollPanel2 = new JScrollPane(this.jPanel2);
+        scrollPanel2.setBorder(null); // Sin borde externo
+        scrollPanel2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); // Solo vertical
+        scrollPanel2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); // Scroll automático
+        scrollPanel2.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Ocultar barra visualmente (opcional, estilo touch)
+        scrollPanel2.setPreferredSize(new Dimension(70, 0)); // Ancho suficiente para 45px
+        this.m_jPanTicket.add(scrollPanel2, "Before"); // Agregar ScrollPane al panel principal (OESTE)
+        
+        this.jPanel2.setLayout(new GridLayout(0, 1, 0, 25)); // Gap ajustado a 25px (mitad de 52px)
+        this.jPanel2.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding interno superior/inferior
+        
+        this.m_jDelete.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/deletelineticket.png"), 24, 24)); // Icono 24px
         this.m_jDelete.setText(AppLocal.getIntString("label.deleteline"));
         this.m_jDelete.setToolTipText(AppLocal.getIntString("label.deleteline"));
-        SOLTECTheme.applyModernButtonStyle(this.m_jDelete);
-        this.m_jDelete.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(this.m_jDelete);
+        this.m_jDelete.setPreferredSize(new Dimension(45, 45)); // Botones de 45px (Pequeños)
         this.m_jDelete.addActionListener(new ActionListener(){
 
             @Override
@@ -2049,11 +2081,11 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jDelete);
-        this.m_jList.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/searchnew.png"), 40, 40));
+        this.m_jList.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/searchnew.png"), 24, 24));
         this.m_jList.setText(AppLocal.getIntString("label.search"));
         this.m_jList.setToolTipText(AppLocal.getIntString("label.search"));
-        SOLTECTheme.applyModernButtonStyle(this.m_jList);
-        this.m_jList.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(this.m_jList);
+        this.m_jList.setPreferredSize(new Dimension(45, 45));
         this.m_jList.addActionListener(new ActionListener(){
 
             @Override
@@ -2062,11 +2094,11 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jList);
-        this.m_jEditLine.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/editline.png"), 40, 40));
+        this.m_jEditLine.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/editline.png"), 24, 24));
         this.m_jEditLine.setText(AppLocal.getIntString("label.editline"));
         this.m_jEditLine.setToolTipText(AppLocal.getIntString("label.editline"));
-        SOLTECTheme.applyModernButtonStyle(this.m_jEditLine);
-        this.m_jEditLine.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(this.m_jEditLine);
+        this.m_jEditLine.setPreferredSize(new Dimension(45, 45));
         this.m_jEditLine.addActionListener(new ActionListener(){
 
             @Override
@@ -2075,11 +2107,11 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jEditLine);
-        this.jEditAttributes.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/atributos.png"), 40, 40));
+        this.jEditAttributes.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/atributos.png"), 24, 24));
         this.jEditAttributes.setText(AppLocal.getIntString("label.attributes"));
         this.jEditAttributes.setToolTipText(AppLocal.getIntString("tooltip.saleattributes"));
-        SOLTECTheme.applyModernButtonStyle(this.jEditAttributes);
-        this.jEditAttributes.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(this.jEditAttributes);
+        this.jEditAttributes.setPreferredSize(new Dimension(45, 45));
         this.jEditAttributes.addActionListener(new ActionListener(){
 
             @Override
@@ -2090,11 +2122,11 @@ TicketsEditor {
         this.jPanel2.add(this.jEditAttributes);
         final JPopupMenu m_popMore = new JPopupMenu();
         final JButton m_btnMore = new JButton();
-        m_btnMore.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/auxpanel.png"), 40, 40));
+        m_btnMore.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/auxpanel.png"), 24, 24));
         m_btnMore.setText("Mas");
         m_btnMore.setToolTipText("Panel Auxiliar");
-        SOLTECTheme.applyModernButtonStyle(m_btnMore);
-        m_btnMore.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(m_btnMore);
+        m_btnMore.setPreferredSize(new Dimension(45, 45));
         m_btnMore.addActionListener(new ActionListener(){
 
             @Override
@@ -2104,11 +2136,11 @@ TicketsEditor {
         });
         this.jPanel2.add(m_btnMore);
         JButton btnExit = new JButton();
-        btnExit.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/exitback.png"), 40, 40));
-        btnExit.setText(AppLocal.getIntString("label.exit")); // Ensure label.exit exists or uses literal "Salir"
+        btnExit.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/exitback.png"), 24, 24));
+        btnExit.setText("Salir");
         btnExit.setToolTipText(AppLocal.getIntString("tooltip.quicklogoff"));
-        SOLTECTheme.applyModernButtonStyle(btnExit);
-        btnExit.setPreferredSize(new Dimension(80, 70));
+        SOLTECTheme.applyBorderlessButtonStyle(btnExit);
+        btnExit.setPreferredSize(new Dimension(45, 45));
         btnExit.addActionListener(new ActionListener(){
 
             @Override
@@ -2120,11 +2152,12 @@ TicketsEditor {
         this.jPanel2.add(btnExit);
         Dimension dimBtnSide = new Dimension(90, 70);
         int iconSizeSide = 48;
-        this.m_jbtnScale.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/balance.png"), iconSizeSide, iconSizeSide));
+        this.m_jbtnScale.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/balance.png"), 40, 40));
+        this.m_jbtnScale.setText(AppLocal.getIntString("button.scale"));
         this.m_jbtnScale.setToolTipText(AppLocal.getIntString("button.scale"));
         this.m_jbtnScale.setBackground(Color.WHITE);
-        this.m_jbtnScale.setPreferredSize(dimBtnSide);
-        SOLTECTheme.applyIconButtonStyle(this.m_jbtnScale);
+        this.m_jbtnScale.setPreferredSize(new Dimension(90, 48));
+        SOLTECTheme.applyBorderlessButtonStyle(this.m_jbtnScale);
         this.m_jbtnScale.addActionListener(new ActionListener(){
 
             @Override
@@ -2148,10 +2181,11 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jbtnScale);
-        this.m_jPanTicket.add((Component)this.jPanel2, "Before");
-        this.jPanel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        this.jPanel2.setPreferredSize(new Dimension(95, 250));
-        this.jPanel2.setLayout(new GridLayout(0, 1, 0, 5));
+        // Eliminado código antiguo de jPanel2 para usar JScrollPane definido arriba
+        // this.m_jPanTicket.add((Component)this.jPanel2, "Before");
+        // this.jPanel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        // this.jPanel2.setPreferredSize(new Dimension(95, 250));
+        // this.jPanel2.setLayout(new GridLayout(0, 1, 0, 5));
         this.m_jPanTicket.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.m_jPanTicket.setLayout(new BorderLayout());
         this.jPanel5.setLayout(new BorderLayout());
@@ -2204,6 +2238,17 @@ TicketsEditor {
             }
         });
         m_popMore.add(menuDrawer);
+        
+        // OPCIÓN PRE-FACTURA (Panel Auxiliar)
+        JMenuItem menuPreBill = new JMenuItem("Pre-Factura / Cuenta");
+        menuPreBill.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/ticket_print.png"), 32, 32));
+        menuPreBill.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                JPanelTicket.this.printTicket("Printer.TicketPreview");
+            }
+        });
+        m_popMore.add(menuPreBill);
         this.jPanel5.add((Component)this.jPanel2, "North");
         this.m_jPanTicket.add((Component)this.jPanel5, "Before");
         this.m_jPanelCentral.setFont(new Font("Arial", 0, 14));
@@ -2321,7 +2366,7 @@ TicketsEditor {
         this.m_jPor.setOpaque(true);
         this.m_jPor.setPreferredSize(new Dimension(22, 25));
         this.m_jPor.setRequestFocusEnabled(false);
-        this.m_jEnter.setIcon(safeIcon("/com/openbravo/images/barcode.png"));
+        this.m_jEnter.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/barcode.png"), 28, 28));
         this.m_jEnter.setToolTipText(AppLocal.getIntString("tooltip.salebarcode"));
         this.m_jEnter.setFocusPainted(false);
         this.m_jEnter.setFocusable(false);

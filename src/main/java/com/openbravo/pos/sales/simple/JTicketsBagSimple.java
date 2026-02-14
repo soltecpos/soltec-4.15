@@ -5,6 +5,7 @@ package com.openbravo.pos.sales.simple;
 
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
+import com.openbravo.pos.plaf.SOLTECTheme;
 import com.openbravo.pos.sales.JTicketsBag;
 import com.openbravo.pos.sales.TicketsEditor;
 import com.openbravo.pos.ticket.TicketInfo;
@@ -61,15 +62,17 @@ extends JTicketsBag {
         this.m_jDelTicket = new JButton();
         this.setFont(new Font("Arial", 0, 12));
         this.setLayout(new FlowLayout(0));
-        this.m_jDelTicket.setIcon(new ImageIcon(this.getClass().getResource("/com/openbravo/images/sale_delete.png")));
+        // BOTÓN ELIMINAR - MODO SIMPLE (Actualizado a 'eliminarpedidoactual.png')
+        this.m_jDelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/eliminarpedidoactual.png"), 55, 55));
         ResourceBundle bundle = ResourceBundle.getBundle("pos_messages");
         this.m_jDelTicket.setToolTipText(bundle.getString("tooltip.delete"));
+        SOLTECTheme.applyIconButtonStyle(this.m_jDelTicket); // Asegurar estilo
         this.m_jDelTicket.setFocusPainted(false);
         this.m_jDelTicket.setFocusable(false);
         this.m_jDelTicket.setMargin(new Insets(0, 4, 0, 4));
-        this.m_jDelTicket.setMaximumSize(new Dimension(50, 40));
-        this.m_jDelTicket.setMinimumSize(new Dimension(50, 40));
-        this.m_jDelTicket.setPreferredSize(new Dimension(80, 45));
+        this.m_jDelTicket.setMaximumSize(new Dimension(80, 70));
+        this.m_jDelTicket.setMinimumSize(new Dimension(80, 70));
+        this.m_jDelTicket.setPreferredSize(new Dimension(80, 70));
         this.m_jDelTicket.setRequestFocusEnabled(false);
         this.m_jDelTicket.addActionListener(new ActionListener(){
 

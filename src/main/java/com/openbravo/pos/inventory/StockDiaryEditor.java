@@ -535,7 +535,7 @@ implements EditorRecord {
                 StockDiaryEditor.this.m_jcodebarActionPerformed(evt);
             }
         });
-        this.m_jEnter.setIcon(new ImageIcon(this.getClass().getResource("/com/openbravo/images/barcode.png")));
+        this.m_jEnter.setIcon(com.openbravo.pos.plaf.SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/barcode.png"), 24, 24));
         this.m_jEnter.setToolTipText("Get Barcode");
         this.m_jEnter.setFocusPainted(false);
         this.m_jEnter.setFocusable(false);

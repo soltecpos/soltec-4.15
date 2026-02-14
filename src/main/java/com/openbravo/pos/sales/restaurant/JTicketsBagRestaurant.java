@@ -135,15 +135,22 @@ extends JPanel {
         this.m_DelTicket = new JButton();
         this.j_btnKitchen = new JButton();
         this.setFont(new Font("Arial", 0, 12));
-        this.setMinimumSize(new Dimension(250, 75));
-        this.setPreferredSize(new Dimension(250, 75));
-        this.setLayout(new FlowLayout(2, 0, 0));
-        this.m_DelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/sale_delete.png"), 40, 40));
+        // Aumentar dimensiones del panel para caber botones de 90x85
+        this.setMinimumSize(new Dimension(300, 95));
+        this.setPreferredSize(new Dimension(300, 95));
+        this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        
+        // BOTÓN ELIMINAR PEDIDO (CANECA) - MODO RESTAURANTE
+        this.m_DelTicket.setFont(new Font("Arial", Font.BOLD, 10));
+        this.m_DelTicket.setText("Eliminar");
+        this.m_DelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/eliminarpedidoactual.png"), 55, 55));
         this.m_DelTicket.setToolTipText("Eliminar Pedido Actual");
         SOLTECTheme.applyIconButtonStyle(this.m_DelTicket);
-        this.m_DelTicket.setPreferredSize(new Dimension(55, 55));
-        this.m_DelTicket.setMinimumSize(new Dimension(55, 55));
-        this.m_DelTicket.setMaximumSize(new Dimension(55, 55));
+        this.m_DelTicket.setVerticalTextPosition(JButton.BOTTOM);
+        this.m_DelTicket.setHorizontalTextPosition(JButton.CENTER);
+        this.m_DelTicket.setPreferredSize(new Dimension(90, 85));
+        this.m_DelTicket.setMinimumSize(new Dimension(90, 85));
+        this.m_DelTicket.setMaximumSize(new Dimension(90, 85));
         this.m_DelTicket.addActionListener(new ActionListener(){
 
             @Override
@@ -152,12 +159,19 @@ extends JPanel {
             }
         });
         this.add(this.m_DelTicket);
-        this.m_TablePlan.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/plano_mesas.png"), 40, 40));
+        
+        // BOTÓN PLANO DE MESAS (Ajustado a 55px para uniformidad)
+        // CAMBIO DE ICONO: botonmesas.png (Solicitado por usuario)
+        this.m_TablePlan.setFont(new Font("Arial", Font.BOLD, 10));
+        this.m_TablePlan.setText("Mesas");
+        this.m_TablePlan.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/botonmesas.png"), 55, 55));
         this.m_TablePlan.setToolTipText("Volver al Plano de Mesas");
         SOLTECTheme.applyIconButtonStyle(this.m_TablePlan);
-        this.m_TablePlan.setPreferredSize(new Dimension(55, 55));
-        this.m_TablePlan.setMinimumSize(new Dimension(55, 55));
-        this.m_TablePlan.setMaximumSize(new Dimension(55, 55));
+        this.m_TablePlan.setVerticalTextPosition(JButton.BOTTOM);
+        this.m_TablePlan.setHorizontalTextPosition(JButton.CENTER);
+        this.m_TablePlan.setPreferredSize(new Dimension(90, 85));
+        this.m_TablePlan.setMinimumSize(new Dimension(90, 85));
+        this.m_TablePlan.setMaximumSize(new Dimension(90, 85));
         this.m_TablePlan.addActionListener(new ActionListener(){
 
             @Override
@@ -166,12 +180,18 @@ extends JPanel {
             }
         });
         this.add(this.m_TablePlan);
-        this.m_MoveTable.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/cambio_mesa.png"), 40, 40));
+        
+        // BOTÓN MOVER MESA (Ajustado a 55px para uniformidad)
+        this.m_MoveTable.setFont(new Font("Arial", Font.BOLD, 10));
+        this.m_MoveTable.setText("Mover");
+        this.m_MoveTable.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/movermesa.png"), 55, 55));
         this.m_MoveTable.setToolTipText("Mover Mesa / Combinar");
         SOLTECTheme.applyIconButtonStyle(this.m_MoveTable);
-        this.m_MoveTable.setPreferredSize(new Dimension(55, 55));
-        this.m_MoveTable.setMinimumSize(new Dimension(55, 55));
-        this.m_MoveTable.setMaximumSize(new Dimension(55, 55));
+        this.m_MoveTable.setVerticalTextPosition(JButton.BOTTOM);
+        this.m_MoveTable.setHorizontalTextPosition(JButton.CENTER);
+        this.m_MoveTable.setPreferredSize(new Dimension(90, 85));
+        this.m_MoveTable.setMinimumSize(new Dimension(90, 85));
+        this.m_MoveTable.setMaximumSize(new Dimension(90, 85));
         this.m_MoveTable.addActionListener(new ActionListener(){
 
             @Override
