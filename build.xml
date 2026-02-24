@@ -25,6 +25,10 @@
         <copy todir="${classes.dir}">
             <fileset dir="${resources.dir}"/>
         </copy>
+        <!-- Flatten reports directory to root of classpath to fix Jasper resource loading -->
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}/reports"/>
+        </copy>
         <!-- Also copy non-java files from src/main/java just in case -->
         <copy todir="${classes.dir}">
             <fileset dir="${src.dir}" excludes="**/*.java"/>

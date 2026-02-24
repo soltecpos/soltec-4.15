@@ -13,6 +13,9 @@ import java.util.Date;
 public class AuditLogger {
     public static void logEvent(Session s, String type, String user, String product, Double qty, String oldValue, String newValue, String info) {
         try {
+            if (product == null) {
+                product = "N/A"; // Evita caída del logger si un ticket vacío se desactiva
+            }
             Object[] values = new Object[]{new Date(), type, user, product, qty, oldValue, newValue, info};
             new PreparedSentence(s, "INSERT INTO AUDIT_LINES (DATE, TYPE, USER, PRODUCT, QTY, OLD_VALUE, NEW_VALUE, INFO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", new SerializerWriteBasic(Datas.TIMESTAMP, Datas.STRING, Datas.STRING, Datas.STRING, Datas.DOUBLE, Datas.STRING, Datas.STRING, Datas.STRING)).exec(values);
         }

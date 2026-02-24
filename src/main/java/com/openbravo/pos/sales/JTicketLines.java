@@ -241,6 +241,7 @@ extends JPanel {
     extends AbstractTableModel {
         private final ColumnTicket[] m_acolumns;
         private final ArrayList m_rows = new ArrayList();
+        private final ArrayList<TicketLineInfo> m_linesinfos = new ArrayList<TicketLineInfo>();
 
         public TicketTableModel(ColumnTicket[] acolumns) {
             this.m_acolumns = acolumns;
@@ -275,12 +276,14 @@ extends JPanel {
             int old = this.getRowCount();
             if (old > 0) {
                 this.m_rows.clear();
+                this.m_linesinfos.clear();
                 this.fireTableRowsDeleted(0, old - 1);
             }
         }
 
         public void setRow(int index, TicketLineInfo oLine) {
             String[] row = (String[])this.m_rows.get(index);
+            this.m_linesinfos.set(index, oLine);
             for (int i = 0; i < this.m_acolumns.length; ++i) {
                 try {
                     ScriptEngine script = ScriptFactory.getScriptEngine("velocity");
@@ -312,12 +315,18 @@ extends JPanel {
                 }
             }
             this.m_rows.add(index, row);
+            this.m_linesinfos.add(index, oLine);
             this.fireTableRowsInserted(index, index);
         }
 
         public void removeRow(int row) {
             this.m_rows.remove(row);
+            this.m_linesinfos.remove(row);
             this.fireTableRowsDeleted(row, row);
+        }
+        
+        public TicketLineInfo getLineProperties(int row) {
+            return this.m_linesinfos.get(row);
         }
     }
 
@@ -335,6 +344,25 @@ extends JPanel {
             aux.setVerticalAlignment(0);
             aux.setHorizontalAlignment(this.m_acolumns[column].align);
             aux.setFont(new Font("Segoe UI", 0, 18));
+            
+            TicketLineInfo lineInfo = ((TicketTableModel)table.getModel()).getLineProperties(row);
+            String ss = lineInfo.getProperty("sendstatus");
+            
+            if ("Yes".equals(ss)) {
+                if (isSelected) {
+                    aux.setBackground(new Color(240, 190, 130));
+                } else {
+                    aux.setBackground(new Color(255, 220, 180));
+                }
+                aux.setOpaque(true);
+            } else {
+                if (isSelected) {
+                    aux.setBackground(table.getSelectionBackground());
+                } else {
+                    aux.setBackground(table.getBackground());
+                }
+                aux.setOpaque(true);
+            }
             return aux;
         }
     }

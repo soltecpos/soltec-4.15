@@ -79,6 +79,7 @@ extends JPanel {
     public void activate() {
         this.m_DelTicket.setEnabled(this.m_App.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
         this.m_TablePlan.setEnabled(this.m_App.getAppUserView().getUser().hasPermission("sales.TablePlan"));
+        this.m_MoveTable.setEnabled(this.m_App.getAppUserView().getUser().hasPermission("sales.MoveTable"));
         this.m_TablePlan.setVisible(true);
     }
 
@@ -135,22 +136,24 @@ extends JPanel {
         this.m_DelTicket = new JButton();
         this.j_btnKitchen = new JButton();
         this.setFont(new Font("Arial", 0, 12));
-        // Aumentar dimensiones del panel para caber botones de 90x85
-        this.setMinimumSize(new Dimension(300, 95));
-        this.setPreferredSize(new Dimension(300, 95));
+        // Dimensiones ajustadas para caber en m_jPanelBag de 220px
+        this.setMinimumSize(new Dimension(220, 95));
+        this.setPreferredSize(new Dimension(220, 95));
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        
+        Dimension dimBtn = new Dimension(70, 85);
         
         // BOTÓN ELIMINAR PEDIDO (CANECA) - MODO RESTAURANTE
         this.m_DelTicket.setFont(new Font("Arial", Font.BOLD, 10));
         this.m_DelTicket.setText("Eliminar");
-        this.m_DelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/eliminarpedidoactual.png"), 55, 55));
+        this.m_DelTicket.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/eliminarpedidoactual.png"), 40, 40));
         this.m_DelTicket.setToolTipText("Eliminar Pedido Actual");
         SOLTECTheme.applyIconButtonStyle(this.m_DelTicket);
         this.m_DelTicket.setVerticalTextPosition(JButton.BOTTOM);
         this.m_DelTicket.setHorizontalTextPosition(JButton.CENTER);
-        this.m_DelTicket.setPreferredSize(new Dimension(90, 85));
-        this.m_DelTicket.setMinimumSize(new Dimension(90, 85));
-        this.m_DelTicket.setMaximumSize(new Dimension(90, 85));
+        this.m_DelTicket.setPreferredSize(dimBtn);
+        this.m_DelTicket.setMinimumSize(dimBtn);
+        this.m_DelTicket.setMaximumSize(dimBtn);
         this.m_DelTicket.addActionListener(new ActionListener(){
 
             @Override
@@ -160,18 +163,17 @@ extends JPanel {
         });
         this.add(this.m_DelTicket);
         
-        // BOTÓN PLANO DE MESAS (Ajustado a 55px para uniformidad)
-        // CAMBIO DE ICONO: botonmesas.png (Solicitado por usuario)
+        // BOTÓN PLANO DE MESAS
         this.m_TablePlan.setFont(new Font("Arial", Font.BOLD, 10));
         this.m_TablePlan.setText("Mesas");
-        this.m_TablePlan.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/botonmesas.png"), 55, 55));
+        this.m_TablePlan.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/botonmesas.png"), 40, 40));
         this.m_TablePlan.setToolTipText("Volver al Plano de Mesas");
         SOLTECTheme.applyIconButtonStyle(this.m_TablePlan);
         this.m_TablePlan.setVerticalTextPosition(JButton.BOTTOM);
         this.m_TablePlan.setHorizontalTextPosition(JButton.CENTER);
-        this.m_TablePlan.setPreferredSize(new Dimension(90, 85));
-        this.m_TablePlan.setMinimumSize(new Dimension(90, 85));
-        this.m_TablePlan.setMaximumSize(new Dimension(90, 85));
+        this.m_TablePlan.setPreferredSize(dimBtn);
+        this.m_TablePlan.setMinimumSize(dimBtn);
+        this.m_TablePlan.setMaximumSize(dimBtn);
         this.m_TablePlan.addActionListener(new ActionListener(){
 
             @Override
@@ -181,17 +183,17 @@ extends JPanel {
         });
         this.add(this.m_TablePlan);
         
-        // BOTÓN MOVER MESA (Ajustado a 55px para uniformidad)
+        // BOTÓN MOVER MESA
         this.m_MoveTable.setFont(new Font("Arial", Font.BOLD, 10));
         this.m_MoveTable.setText("Mover");
-        this.m_MoveTable.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/movermesa.png"), 55, 55));
+        this.m_MoveTable.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/movermesa.png"), 40, 40));
         this.m_MoveTable.setToolTipText("Mover Mesa / Combinar");
         SOLTECTheme.applyIconButtonStyle(this.m_MoveTable);
         this.m_MoveTable.setVerticalTextPosition(JButton.BOTTOM);
         this.m_MoveTable.setHorizontalTextPosition(JButton.CENTER);
-        this.m_MoveTable.setPreferredSize(new Dimension(90, 85));
-        this.m_MoveTable.setMinimumSize(new Dimension(90, 85));
-        this.m_MoveTable.setMaximumSize(new Dimension(90, 85));
+        this.m_MoveTable.setPreferredSize(dimBtn);
+        this.m_MoveTable.setMinimumSize(dimBtn);
+        this.m_MoveTable.setMaximumSize(dimBtn);
         this.m_MoveTable.addActionListener(new ActionListener(){
 
             @Override
@@ -255,6 +257,18 @@ extends JPanel {
         catch (EvalError ex) {
             Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // Marcar todas las líneas como enviadas para resaltado naranja
+        if (this.ticket != null) {
+            for (int x = 0; x < this.ticket.getLinesCount(); ++x) {
+                this.ticket.getLine(x).setProperty("sendstatus", "Yes");
+            }
+        }
+        // Refrescar la vista del ticket para que el renderer aplique el color
+        java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (win != null) {
+            win.repaint();
+        }
+        
         String autoLogoff = this.m_App.getProperties().getProperty("till.autoLogoff");
         String autoLogoffRestaurant = this.m_App.getProperties().getProperty("till.autoLogoffrestaurant");
         if (autoLogoff != null && autoLogoff.equals("true")) {

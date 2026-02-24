@@ -1,0 +1,112 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package com.openbravo.pos.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Random;
+
+public class StringUtils {
+    private static final char[] hexchars = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final NumberFormat cardformat = new DecimalFormat("000000");
+    private static final Random cardrandom = new Random();
+
+    private StringUtils() {
+    }
+
+    public static String getCardNumber() {
+        return cardformat.format(Math.abs(System.currentTimeMillis()) % 1000000L) + cardformat.format(Math.abs(cardrandom.nextLong()) % 1000000L);
+    }
+
+    public static String encodeXML(String sValue) {
+        if (sValue == null) {
+            return null;
+        }
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < sValue.length(); ++i) {
+            char charToCompare = sValue.charAt(i);
+            if (charToCompare == '&') {
+                buffer.append("&amp;");
+                continue;
+            }
+            if (charToCompare == '<') {
+                buffer.append("&lt;");
+                continue;
+            }
+            if (charToCompare == '>') {
+                buffer.append("&gt;");
+                continue;
+            }
+            if (charToCompare == '\"') {
+                buffer.append("&quot;");
+                continue;
+            }
+            if (charToCompare == '\'') {
+                buffer.append("&apos;");
+                continue;
+            }
+            buffer.append(charToCompare);
+        }
+        return buffer.toString();
+    }
+
+    public static String byte2hex(byte[] binput) {
+        StringBuilder sb = new StringBuilder(binput.length * 2);
+        for (int i = 0; i < binput.length; ++i) {
+            int high = (binput[i] & 0xF0) >> 4;
+            int low = binput[i] & 0xF;
+            sb.append(hexchars[high]);
+            sb.append(hexchars[low]);
+        }
+        return sb.toString();
+    }
+
+    public static byte[] hex2byte(String sinput) {
+        int length = sinput.length();
+        if ((length & 1) != 0) {
+            throw new IllegalArgumentException("odd number of characters.");
+        }
+        byte[] out = new byte[length >> 1];
+        int i = 0;
+        int j = 0;
+        while (j < length) {
+            int f = Character.digit(sinput.charAt(j++), 16) << 4;
+            out[i] = (byte)((f |= Character.digit(sinput.charAt(j++), 16)) & 0xFF);
+            ++i;
+        }
+        return out;
+    }
+
+    public static String readResource(String resource) throws IOException {
+        int len;
+        InputStream in = StringUtils.class.getResourceAsStream(resource);
+        if (in == null) {
+            throw new FileNotFoundException(resource);
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        while ((len = in.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+        }
+        byte[] data = out.toByteArray();
+        return new String(data, "UTF-8");
+    }
+
+    public static boolean isNumber(String sCardNumber) {
+        if (sCardNumber == null || sCardNumber.equals("")) {
+            return false;
+        }
+        for (int i = 0; i < sCardNumber.length(); ++i) {
+            char c = sCardNumber.charAt(i);
+            if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9') continue;
+            return false;
+        }
+        return true;
+    }
+}
+

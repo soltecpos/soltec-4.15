@@ -26,11 +26,11 @@ extends JFrame {
     public JFrmConfig(AppProperties props) {
         this.initComponents();
         try {
-            java.io.InputStream imgStream = JRootFrame.class.getResourceAsStream("/com/openbravo/images/favicon.png");
+            java.io.InputStream imgStream = JRootFrame.class.getResourceAsStream("/com/openbravo/images/iconoprincipal.png");
             if (imgStream != null) {
                 this.setIconImage(ImageIO.read(imgStream));
             } else {
-                System.err.println("WARNING: Icon resource not found: /com/openbravo/images/favicon.png");
+                System.err.println("WARNING: Icon resource not found: /com/openbravo/images/iconoprincipal.png");
             }
         }
         catch (IOException iOException) {

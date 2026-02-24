@@ -307,7 +307,7 @@ DeviceMonitorEventListener {
         }
         this.m_dlSystem = (DataLogicSystem)this.getBean("com.openbravo.pos.forms.DataLogicSystem");
         String sDBVersion = this.readDataBaseVersion();
-        if (!"4.15".equals(sDBVersion)) {
+        if (!AppLocal.APP_VERSION.equals(sDBVersion)) {
             String sScript;
             String string = sScript = sDBVersion == null ? this.m_dlSystem.getInitScript() + "-create.sql" : this.m_dlSystem.getInitScript() + "-upgrade-" + sDBVersion + ".sql";
             if (JRootApp.class.getResource(sScript) == null) {
@@ -322,8 +322,8 @@ DeviceMonitorEventListener {
             try {
                 BatchSentenceResource bsentence = new BatchSentenceResource(this.session, sScript);
                 bsentence.putParameter("APP_ID", Matcher.quoteReplacement("soltecpos"));
-                bsentence.putParameter("APP_NAME", Matcher.quoteReplacement("SOLTEC POS"));
-                bsentence.putParameter("APP_VERSION", Matcher.quoteReplacement("4.15"));
+                bsentence.putParameter("APP_NAME", Matcher.quoteReplacement(AppLocal.APP_NAME));
+                bsentence.putParameter("APP_VERSION", Matcher.quoteReplacement(AppLocal.APP_VERSION));
                 List l = bsentence.list();
                 if (l.size() > 0) {
                     JMessageDialog.showMessage(this, new MessageInf(-33554432, AppLocal.getIntString("database.scriptwarning"), l.toArray(new Throwable[l.size()])));
@@ -620,13 +620,13 @@ DeviceMonitorEventListener {
     private void printerStart() {
         String sresource = this.m_dlSystem.getResourceAsXML("Printer.Start");
         if (sresource == null) {
-            this.m_TP.getDeviceDisplay().writeVisor("SOLTEC POS", "4.15");
+            this.m_TP.getDeviceDisplay().writeVisor(AppLocal.APP_NAME, AppLocal.APP_VERSION);
         } else {
             try {
                 this.m_TTP.printTicket(sresource);
             }
             catch (TicketPrinterException eTP) {
-                this.m_TP.getDeviceDisplay().writeVisor("SOLTEC POS", "4.15");
+                this.m_TP.getDeviceDisplay().writeVisor(AppLocal.APP_NAME, AppLocal.APP_VERSION);
             }
         }
     }
@@ -665,6 +665,19 @@ DeviceMonitorEventListener {
 
     private void openAppView(AppUser user) {
         if (this.closeAppView()) {
+            try {
+                com.openbravo.pos.forms.DataLogicSales dlSales = (com.openbravo.pos.forms.DataLogicSales) this.getBean("com.openbravo.pos.forms.DataLogicSales");
+                java.util.List<com.openbravo.pos.inventory.InventoryTaskInfo> pendingTasks = dlSales.getPendingInventoryTasks(user.getId(), this.m_sInventoryLocation);
+                if (pendingTasks != null && !pendingTasks.isEmpty()) {
+                    boolean success = com.openbravo.pos.inventory.JDialogBlindInventory.showMessage(this, dlSales, pendingTasks.get(0), user);
+                    if (!success) {
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             this.m_principalapp = new JPrincipalApp(this, user);
             this.jPanel3.add(this.m_principalapp.getNotificator());
             this.jPanel3.revalidate();

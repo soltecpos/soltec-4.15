@@ -785,6 +785,51 @@ extends BeanFactoryDataSingle {
         return (Integer)this.s.DB.getSequenceSentence(this.s, "ticketsnum_docs").find();
     }
 
+    public final java.util.List<com.openbravo.pos.inventory.InventoryTaskInfo> getPendingInventoryTasks(String assigneeRole, String locationId) throws com.openbravo.basic.BasicException {
+        return new com.openbravo.data.loader.PreparedSentence<Object[], com.openbravo.pos.inventory.InventoryTaskInfo>(this.s, "SELECT ID, STATUS, CREATED_AT, AUTHOR_ID, LOCATION_ID, ASSIGNEE_ROLE FROM inventory_tasks WHERE STATUS = 'PENDING' AND ASSIGNEE_ROLE = ? AND LOCATION_ID = ?", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING), new com.openbravo.data.loader.SerializerReadClass<com.openbravo.pos.inventory.InventoryTaskInfo>(com.openbravo.pos.inventory.InventoryTaskInfo.class)).list(new Object[]{assigneeRole, locationId});
+    }
+
+    public final java.util.List<com.openbravo.pos.inventory.InventoryHistoryRecord> getInventoryHistory(String productId) throws com.openbravo.basic.BasicException {
+        return new com.openbravo.data.loader.PreparedSentence<String, com.openbravo.pos.inventory.InventoryHistoryRecord>(this.s, 
+            "SELECT SD.DATENEW, SD.REASON, SD.UNITS, SD.PRICE, SD.AppUser, " +
+            "(SELECT P.NAME FROM receipts R JOIN ticketlines TL ON R.ID = TL.TICKET JOIN products P ON TL.PRODUCT = P.ID WHERE R.DATENEW = SD.DATENEW AND (TL.PRODUCT = SD.PRODUCT OR EXISTS (SELECT 1 FROM products_com PC WHERE PC.PRODUCT = TL.PRODUCT AND PC.PRODUCT2 = SD.PRODUCT)) LIMIT 1) AS PARENT_PRODUCT_NAME " +
+            "FROM stockdiary SD WHERE SD.PRODUCT = ? ORDER BY SD.DATENEW DESC LIMIT 100", 
+            com.openbravo.data.loader.SerializerWriteString.INSTANCE, 
+            new com.openbravo.data.loader.SerializerRead() {
+                public Object readValues(com.openbravo.data.loader.DataRead dr) throws com.openbravo.basic.BasicException {
+                    return new com.openbravo.pos.inventory.InventoryHistoryRecord(
+                        dr.getTimestamp(1), 
+                        dr.getInt(2), 
+                        dr.getDouble(3), 
+                        0.0, // Running balance to be calculated in UI 
+                        dr.getString(5),
+                        dr.getString(6)
+                    );
+                }
+            }
+        ).list(productId);
+    }
+
+    public final java.util.List<com.openbravo.pos.inventory.InventoryTaskLineInfo> getInventoryTaskLines(String taskId) throws com.openbravo.basic.BasicException {
+        return new com.openbravo.data.loader.PreparedSentence<String, com.openbravo.pos.inventory.InventoryTaskLineInfo>(this.s, "SELECT L.TASK_ID, L.PRODUCT_ID, L.SYSTEM_QTY, L.COUNTED_QTY, L.DIFFERENCE, P.NAME FROM inventory_task_lines L JOIN products P ON L.PRODUCT_ID = P.ID WHERE L.TASK_ID = ?", com.openbravo.data.loader.SerializerWriteString.INSTANCE, new com.openbravo.data.loader.SerializerReadClass<com.openbravo.pos.inventory.InventoryTaskLineInfo>(com.openbravo.pos.inventory.InventoryTaskLineInfo.class)).list(taskId);
+    }
+
+    public final void insertInventoryTask(com.openbravo.pos.inventory.InventoryTaskInfo task) throws com.openbravo.basic.BasicException {
+        new com.openbravo.data.loader.PreparedSentence(this.s, "INSERT INTO inventory_tasks (ID, STATUS, CREATED_AT, AUTHOR_ID, LOCATION_ID, ASSIGNEE_ROLE) VALUES (?, ?, ?, ?, ?, ?)", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.TIMESTAMP, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING)).exec(new Object[]{task.getId(), task.getStatus(), task.getCreatedAt(), task.getAuthorId(), task.getLocationId(), task.getAssigneeRole()});
+    }
+
+    public final void insertInventoryTaskLine(com.openbravo.pos.inventory.InventoryTaskLineInfo line) throws com.openbravo.basic.BasicException {
+        new com.openbravo.data.loader.PreparedSentence(this.s, "INSERT INTO inventory_task_lines (TASK_ID, PRODUCT_ID, SYSTEM_QTY, COUNTED_QTY, DIFFERENCE) VALUES (?, ?, ?, ?, ?)", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.DOUBLE)).exec(new Object[]{line.getTaskId(), line.getProductId(), line.getSystemQty(), line.getCountedQty(), line.getDifference()});
+    }
+
+    public final void updateInventoryTaskStatus(String taskId, String status) throws com.openbravo.basic.BasicException {
+        new com.openbravo.data.loader.PreparedSentence(this.s, "UPDATE inventory_tasks SET STATUS = ? WHERE ID = ?", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING)).exec(new Object[]{status, taskId});
+    }
+
+    public final void updateInventoryTaskLineCounted(String taskId, String productId, Double countedQty, Double difference) throws com.openbravo.basic.BasicException {
+        new com.openbravo.data.loader.PreparedSentence(this.s, "UPDATE inventory_task_lines SET COUNTED_QTY = ?, DIFFERENCE = ? WHERE TASK_ID = ? AND PRODUCT_ID = ?", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING)).exec(new Object[]{countedQty, difference, taskId, productId});
+    }
+
     public void updatePlaceCoordinates(String id, int x, int y) throws BasicException {
         new SentenceExecTransaction<Object[]>(this.s){
 

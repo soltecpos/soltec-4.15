@@ -1,28 +1,17 @@
-# Directorios de compilación de Ant/Java
+# Installer executables
+installers/*.exe
+installers/*.zip
+
+# Java build
 build/
 dist/
-out/
 target/
+*.class
 
-# Archivos de logs y temporales
-*.log
-*.tmp
-*.bak
-soltec_error.log
-pos_console.log
-
-# Configuración específica de usuario/IDE
-nbproject/private/
+# IDE
 .idea/
 *.iml
-.DS_Store
-Thumbs.db
+.vscode/
 
-# Herramientas y binarios grandes (NO deberían estar en git)
-tools/
-*.zip
-*.exe
-*.msi
-*.jar
-# Excepciones para JARs de bibliotecas necesarias (si las hubiera en lib/)
-!lib/*.jar
+# Logs
+*.log

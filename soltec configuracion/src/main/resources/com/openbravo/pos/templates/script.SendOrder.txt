@@ -1,0 +1,97 @@
+// script.SendOrder
+// Sends an item in a Sale to a remote Printers
+//
+//    uniCenta oPOS - Touch Friendly Point Of Sale
+//    Copyright (c) 2009-2016 uniCenta
+//    http://sourceforge.net/projects/unicentaopos
+//
+//    This file is part of uniCenta oPOS.
+//
+//    uniCenta oPOS is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    uniCenta oPOS is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+// **************************************************************************
+
+private boolean printedP1 = false;
+private boolean printedP2 = false;
+private boolean printedP3 = false;
+private boolean printedP4 = false;
+private boolean printedP5 = false;
+private boolean printedP6 = false;
+
+// Pass 1: For each printer, call printTicket if there are UNPRINTED items (sendstatus != "Yes")
+for(int i= 0; i < ticket.getLinesCount(); i++){
+    line = ticket.getLine(i);
+    String p = line.getProperty("product.printer");
+    String s = line.getProperty("sendstatus");
+    
+    if (p != null && (s == null || !s.equals("Yes"))) {
+        if (p.equals("1") && !printedP1) {
+            sales.printTicket("Printer.Ticket.P1"); 
+            printedP1 = true;
+        } else if (p.equals("2") && !printedP2) {
+            sales.printTicket("Printer.Ticket.P2"); 
+            printedP2 = true;
+        } else if (p.equals("3") && !printedP3) {
+            sales.printTicket("Printer.Ticket.P3"); 
+            printedP3 = true;
+        } else if (p.equals("4") && !printedP4) {
+            sales.printTicket("Printer.Ticket.P4"); 
+            printedP4 = true;
+        } else if (p.equals("5") && !printedP5) {
+            sales.printTicket("Printer.Ticket.P5"); 
+            printedP5 = true;
+        } else if (p.equals("6") && !printedP6) {
+            sales.printTicket("Printer.Ticket.P6"); 
+            printedP6 = true;
+        }
+    }
+}
+
+// Pass 2: Mark ALL lines for triggered printers as "Yes" (already sent)
+for(int i= 0; i < ticket.getLinesCount(); i++){
+    line = ticket.getLine(i);
+    String p = line.getProperty("product.printer");
+    if (p != null) {
+        if ((p.equals("1") && printedP1) ||
+            (p.equals("2") && printedP2) ||
+            (p.equals("3") && printedP3) ||
+            (p.equals("4") && printedP4) ||
+            (p.equals("5") && printedP5) ||
+            (p.equals("6") && printedP6)) {
+            
+            // Only insert if it wasn't already sent
+            String s = line.getProperty("sendstatus");
+            if (s == null || !s.equals("Yes")) {
+                 try {
+                     java.util.UUID uuid = java.util.UUID.randomUUID();
+                     String safeProductName = line.getProductName().replace("'", "\\'");
+                     String safePlace = place != null ? place.toString() : "N/A";
+                     String safeUser = user != null ? user.getName() : "N/A";
+                     
+                     sales.m_dlSystem.s.getConnection().createStatement().executeUpdate(
+                         "INSERT INTO web_kitchen_orders (id, ticket_id, table_name, waiter_name, product_name, multiplier) " +
+                         "VALUES ('" + uuid.toString() + "', '" + ticket.getId() + "', '" + safePlace + "', '" + safeUser + "', '" + safeProductName + "', " + line.getMultiply() + ")"
+                     );
+                 } catch (Exception e) {
+                     javax.swing.JOptionPane.showMessageDialog(null, "Error enviando a pantalla de cocina web: " + e.getMessage());
+                     System.out.println("cocina error: " + e.getMessage());
+                 }
+            }
+
+            line.setProperty("sendstatus", "Yes");
+            // Use remove to avoid NPE with setProperty(..., null)
+            line.getProperties().remove("product.sent_status");
+        }
+    }
+}
+System.out.println("cocina: script.SendOrder finished. P1:" + printedP1 + " P2:" + printedP2);

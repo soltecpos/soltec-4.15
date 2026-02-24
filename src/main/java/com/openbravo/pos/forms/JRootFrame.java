@@ -46,7 +46,7 @@ implements AppMessage {
             }
             this.add((Component)this.m_rootapp, "Center");
             try {
-                this.setIconImage(ImageIO.read(JRootFrame.class.getResourceAsStream("/com/openbravo/images/favicon.png")));
+                this.setIconImage(ImageIO.read(JRootFrame.class.getResourceAsStream("/com/openbravo/images/iconoprincipal.png")));
             }
             catch (Exception exception) {
                 // empty catch block

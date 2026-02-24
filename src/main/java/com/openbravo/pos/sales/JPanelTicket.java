@@ -518,6 +518,11 @@ TicketsEditor {
             this.m_jTax.setVisible(false);
             this.m_jaddtax.setVisible(false);
         }
+        if (this.m_App.getAppUserView().getUser().hasPermission("sales.PrintKitchen")) {
+            this.j_btnRemotePrt.setVisible(true);
+        } else {
+            this.j_btnRemotePrt.setVisible(false);
+        }
         this.m_jDelete.setEnabled(this.m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
         this.m_jNumberKeys.setMinusEnabled(this.m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
         this.m_jNumberKeys.setEqualsEnabled(this.m_App.getAppUserView().getUser().hasPermission("sales.Total"));
@@ -602,9 +607,7 @@ TicketsEditor {
             this.restDB.moveCustomer(oTicketExt.toString(), this.m_oTicket.getId());
         }
         this.executeEvent(this.m_oTicket, this.m_oTicketExt, "ticket.show", new ScriptArg[0]);
-        if (!"restaurant".equals(this.m_App.getProperties().getProperty("machine.ticketsbag"))) {
-            this.j_btnRemotePrt.setVisible(this.m_App.getAppUserView().getUser().hasPermission("sales.PrintKitchen"));
-        }
+        this.j_btnRemotePrt.setVisible(this.m_App.getAppUserView().getUser().hasPermission("sales.PrintKitchen"));
         this.refreshTicket();
     }
 
@@ -1787,9 +1790,9 @@ TicketsEditor {
         Dimension dimBtn = new Dimension(55, 55);
         this.m_jPanelBag.setBackground(Color.WHITE);
         // Aumentar contenedor padre para evitar cortes en botones con texto
-        this.m_jPanelBag.setPreferredSize(new Dimension(300, 95));
+        this.m_jPanelBag.setPreferredSize(new Dimension(220, 95));
         m_jOptionsLeft.add(this.m_jPanelBag);
-        Dimension dimSearch = new Dimension(190, 55);
+        Dimension dimSearch = new Dimension(145, 55);
         Border roundedBorder = BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true);
         JPanel pnlProductSearch = new JPanel(new BorderLayout());
         pnlProductSearch.setBackground(Color.WHITE);
@@ -1870,7 +1873,7 @@ TicketsEditor {
         m_jOptionsLeft.add(this.btnCreateProduct);
         
         // BOTÓN AGREGAR CLIENTE (Gigante + Texto)
-        Dimension dimGiantBtn = new Dimension(90, 85);
+        Dimension dimGiantBtn = new Dimension(75, 85);
         this.btnCreateCustomer.setFont(new Font("Arial", Font.BOLD, 10));
         this.btnCreateCustomer.setText("Cliente");
         this.btnCreateCustomer.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/agregarcliente.png"), 55, 55));
@@ -1947,11 +1950,9 @@ TicketsEditor {
         m_jOptionsLeft.add(pnlCustomerSearch);
         m_jOptionsLeft.add(this.btnCreateCustomer);
         
-        m_jOptionsLeft.add(this.btnCreateCustomer);
-        
         // Ajuste masivo: Iconos GIGANTES (55px) + TEXTO debajo
-        // Dimensiones aumentadas a 90x90 para caber texto
-        Dimension dimTopBtn = new Dimension(90, 85); 
+        // Dimensiones ajustadas a 75x85 para resoluciones 1024x768
+        Dimension dimTopBtn = new Dimension(75, 85); 
         
         // Botón Reimprimir Último Ticket
         this.btnReprint1.setFont(new Font("Arial", Font.BOLD, 10)); // Fuente pequeña para que quepa
@@ -1997,14 +1998,9 @@ TicketsEditor {
         m_jOptionsLeft.add(this.btnSplit);
         
         // Botón Impresión Remota / Cocina
-        this.j_btnRemotePrt.setFont(new Font("Arial", Font.BOLD, 10));
-        this.j_btnRemotePrt.setText("Cocina");
-        this.j_btnRemotePrt.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/icon_kitchen_print_modern.png"), 55, 55));
+        this.j_btnRemotePrt.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/icon_kitchen_print_modern.png"), 28, 28));
         this.j_btnRemotePrt.setToolTipText(AppLocal.getIntString("button.toremote"));
-        SOLTECTheme.applyIconButtonStyle(this.j_btnRemotePrt);
-        this.j_btnRemotePrt.setVerticalTextPosition(JButton.BOTTOM);
-        this.j_btnRemotePrt.setHorizontalTextPosition(JButton.CENTER);
-        this.j_btnRemotePrt.setPreferredSize(dimTopBtn);
+        SOLTECTheme.applyBorderlessButtonStyle(this.j_btnRemotePrt);
 
         this.j_btnRemotePrt.addActionListener(new ActionListener(){
             @Override
@@ -2012,7 +2008,7 @@ TicketsEditor {
                 JPanelTicket.this.j_btnRemotePrtActionPerformed(evt);
             }
         });
-        m_jOptionsLeft.add(this.j_btnRemotePrt); // Agregado al panel IZQUIERDO
+        // No se agrega a m_jOptionsLeft, se agregará a pnlControls más abajo.
 
         this.lblScaleDisplay = new JLabel();
         Dimension dimScale = new Dimension(100, 55);
@@ -2058,21 +2054,20 @@ TicketsEditor {
         this.jPanel5.setLayout(new BorderLayout());
         // JScrollPane para permitir scroll de los botones laterales
         JScrollPane scrollPanel2 = new JScrollPane(this.jPanel2);
-        scrollPanel2.setBorder(null); // Sin borde externo
-        scrollPanel2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); // Solo vertical
-        scrollPanel2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED); // Scroll automático
-        scrollPanel2.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Ocultar barra visualmente (opcional, estilo touch)
-        scrollPanel2.setPreferredSize(new Dimension(70, 0)); // Ancho suficiente para 45px
-        this.m_jPanTicket.add(scrollPanel2, "Before"); // Agregar ScrollPane al panel principal (OESTE)
+        scrollPanel2.setBorder(null);
+        scrollPanel2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPanel2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPanel2.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+        scrollPanel2.setPreferredSize(new Dimension(55, 0)); // Ancho compacto
+        this.m_jPanTicket.add(scrollPanel2, "Before");
         
-        this.jPanel2.setLayout(new GridLayout(0, 1, 0, 25)); // Gap ajustado a 25px (mitad de 52px)
-        this.jPanel2.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5)); // Padding interno superior/inferior
+        this.jPanel2.setLayout(new GridLayout(0, 1, 0, 5));
+        this.jPanel2.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2));
         
-        this.m_jDelete.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/deletelineticket.png"), 24, 24)); // Icono 24px
-        this.m_jDelete.setText(AppLocal.getIntString("label.deleteline"));
+        this.m_jDelete.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/deletelineticket.png"), 32, 32));
         this.m_jDelete.setToolTipText(AppLocal.getIntString("label.deleteline"));
         SOLTECTheme.applyBorderlessButtonStyle(this.m_jDelete);
-        this.m_jDelete.setPreferredSize(new Dimension(45, 45)); // Botones de 45px (Pequeños)
+        this.m_jDelete.setPreferredSize(new Dimension(45, 45));
         this.m_jDelete.addActionListener(new ActionListener(){
 
             @Override
@@ -2081,8 +2076,8 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jDelete);
-        this.m_jList.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/searchnew.png"), 24, 24));
-        this.m_jList.setText(AppLocal.getIntString("label.search"));
+        
+        this.m_jList.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/searchnew.png"), 32, 32));
         this.m_jList.setToolTipText(AppLocal.getIntString("label.search"));
         SOLTECTheme.applyBorderlessButtonStyle(this.m_jList);
         this.m_jList.setPreferredSize(new Dimension(45, 45));
@@ -2094,8 +2089,8 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jList);
-        this.m_jEditLine.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/editline.png"), 24, 24));
-        this.m_jEditLine.setText(AppLocal.getIntString("label.editline"));
+        
+        this.m_jEditLine.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/editline.png"), 32, 32));
         this.m_jEditLine.setToolTipText(AppLocal.getIntString("label.editline"));
         SOLTECTheme.applyBorderlessButtonStyle(this.m_jEditLine);
         this.m_jEditLine.setPreferredSize(new Dimension(45, 45));
@@ -2107,8 +2102,8 @@ TicketsEditor {
             }
         });
         this.jPanel2.add(this.m_jEditLine);
-        this.jEditAttributes.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/atributos.png"), 24, 24));
-        this.jEditAttributes.setText(AppLocal.getIntString("label.attributes"));
+        
+        this.jEditAttributes.setIcon(SOLTECTheme.getScaledIcon(this.getClass().getResource("/com/openbravo/images/atributos.png"), 32, 32));
         this.jEditAttributes.setToolTipText(AppLocal.getIntString("tooltip.saleattributes"));
         SOLTECTheme.applyBorderlessButtonStyle(this.jEditAttributes);
         this.jEditAttributes.setPreferredSize(new Dimension(45, 45));
@@ -2186,9 +2181,8 @@ TicketsEditor {
         // this.jPanel2.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         // this.jPanel2.setPreferredSize(new Dimension(95, 250));
         // this.jPanel2.setLayout(new GridLayout(0, 1, 0, 5));
-        this.m_jPanTicket.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.m_jPanTicket.setLayout(new BorderLayout());
-        this.jPanel5.setLayout(new BorderLayout());
+        // m_jPanTicket ya tiene su layout y borde configurados arriba (línea ~2052)
+        // jPanel5 ya tiene su layout configurado arriba (línea ~2054)
         this.jCheckStock.setFont(new Font("Arial", 1, 14));
         this.jCheckStock.setForeground(new Color(76, 197, 237));
         this.jCheckStock.setToolTipText(AppLocal.getIntString("button.stock"));
@@ -2249,8 +2243,8 @@ TicketsEditor {
             }
         });
         m_popMore.add(menuPreBill);
-        this.jPanel5.add((Component)this.jPanel2, "North");
-        this.m_jPanTicket.add((Component)this.jPanel5, "Before");
+        // jPanel2 ya está dentro de scrollPanel2 (arriba ~línea 2056)
+        // No agregar de nuevo a jPanel5 para evitar conflicto
         this.m_jPanelCentral.setFont(new Font("Arial", 0, 14));
         this.m_jPanelCentral.setPreferredSize(new Dimension(450, 240));
         this.m_jPanelCentral.setLayout(new BorderLayout());
@@ -2444,15 +2438,13 @@ TicketsEditor {
         pnlControls.setBackground(new Color(240, 240, 240));
         pnlControls.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
         Border borderCtrl = BorderFactory.createLineBorder(new Color(160, 160, 160), 1);
-        this.m_jaddtax.setBorder(borderCtrl);
-        this.m_jaddtax.setPreferredSize(new Dimension(66, 40));
-        this.m_jaddtax.setOpaque(true);
-        this.m_jaddtax.setBackground(Color.WHITE);
-        this.m_jaddtax.setForeground(Color.BLACK);
-        this.m_jaddtax.setIcon(safeIcon("/com/openbravo/images/tax.png"));
-        this.m_jaddtax.setSelectedIcon(safeIcon("/com/openbravo/images/tax.png"));
-        this.m_jaddtax.setText("");
-        this.m_jaddtax.setHorizontalTextPosition(0);
+        
+        // Asignamos el estilo y tamaño al boton remoto (Reemplaza m_jaddtax)
+        this.j_btnRemotePrt.setBorder(borderCtrl);
+        this.j_btnRemotePrt.setPreferredSize(new Dimension(66, 40));
+        this.j_btnRemotePrt.setOpaque(true);
+        this.j_btnRemotePrt.setBackground(Color.WHITE);
+        
         this.m_jTax.setBorder(borderCtrl);
         this.m_jTax.setOpaque(true);
         this.m_jTax.setBackground(Color.WHITE);
@@ -2461,7 +2453,8 @@ TicketsEditor {
         this.m_jEnter.setOpaque(true);
         this.m_jEnter.setBackground(Color.WHITE);
         this.m_jEnter.setPreferredSize(new Dimension(66, 40));
-        pnlControls.add(this.m_jaddtax);
+        
+        pnlControls.add(this.j_btnRemotePrt);
         pnlControls.add(this.m_jTax);
         pnlControls.add(this.m_jEnter);
         this.jPanel9.add((Component)pnlControls, "Center");
@@ -2640,8 +2633,15 @@ TicketsEditor {
             Object object = i.eval(rScript);
         }
         catch (EvalError ex) {
-            Logger.getLogger(JPanelTicket.class.getName()).log(Level.ALL, null, ex);
+            Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+        // Marcar sendstatus FUERA del try-catch para que siempre se ejecute
+        if (this.m_oTicket != null) {
+            for (int x = 0; x < this.m_oTicket.getLinesCount(); ++x) {
+                this.m_oTicket.getLine(x).setProperty("sendstatus", "Yes");
+            }
+        }
+        this.refreshTicket();
     }
 
     private void m_jKeyFactoryActionPerformed(ActionEvent evt) {

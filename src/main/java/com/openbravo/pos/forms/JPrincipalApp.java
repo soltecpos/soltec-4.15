@@ -449,16 +449,7 @@ implements AppUserView {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            String sNewPassword = Hashcypher.changePassword(JPrincipalApp.this, JPrincipalApp.this.m_appuser.getPassword());
-            if (sNewPassword != null) {
-                try {
-                    JPrincipalApp.this.m_dlSystem.execChangePassword(new Object[]{sNewPassword, JPrincipalApp.this.m_appuser.getId()});
-                    JPrincipalApp.this.m_appuser.setPassword(sNewPassword);
-                }
-                catch (BasicException e) {
-                    JMessageDialog.showMessage(JPrincipalApp.this, new MessageInf(-33554432, AppLocal.getIntString("message.cannotchangepassword")));
-                }
-            }
+            JPrincipalApp.this.m_appview.closeAppView();
         }
     }
 
