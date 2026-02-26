@@ -1,0 +1,3 @@
+VERSION: backup version 26021246
+FECHA: 2026-02-26
+DESCRIPCION: Última versión del código fuente con interfaz mejorada, correcciones de teclado virtual, impresión a cocina incremental instalada y refactorizaciones en paneles de inventario.

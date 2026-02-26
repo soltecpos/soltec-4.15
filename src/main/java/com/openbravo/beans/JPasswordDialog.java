@@ -64,6 +64,15 @@ extends JDialog {
         }
         this.initComponents();
         this.getRootPane().setDefaultButton(this.jcmdOK);
+        // Ensure Enter key always triggers OK, even when JEditorKeys has focus
+        this.getRootPane().getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), "confirmPassword");
+        this.getRootPane().getActionMap().put("confirmPassword", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                jcmdOK.doClick();
+            }
+        });
         this.m_jpassword.addEditorKeys(this.m_jKeys);
         this.m_jpassword.reset();
         this.m_jpassword.activate();
@@ -199,6 +208,7 @@ extends JDialog {
     }
 
     private void m_jKeysActionPerformed(ActionEvent evt) {
+        this.jcmdOK.doClick();
     }
 }
 

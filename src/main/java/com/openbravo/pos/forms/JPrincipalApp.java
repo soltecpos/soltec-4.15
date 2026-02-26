@@ -372,11 +372,33 @@ implements AppUserView {
                     String replacement = foundMatch + "\n        submenu.addPanel(\"/com/openbravo/images/reports.png\", \"Menu.PaymentSummary\", \"/com/openbravo/reports/sales_paymentsummary.bs\");";
                     String newContent = content.replace(foundMatch, replacement);
                     new PreparedSentence(this.m_appview.getSession(), "UPDATE RESOURCES SET CONTENT = ? WHERE NAME = ?", new SerializerWriteBasic(Datas.STRING, Datas.STRING)).exec(new Object[]{newContent, "Menu.Root"});
-                } else if (content.contains("Menu.SalesManagement") && (matcher = Pattern.compile(regex2 = "submenu\\.addPanel\\s*\\(.*\"Menu\\.CashFlow\".*\\);").matcher(content)).find()) {
-                    String foundMatch = matcher.group();
-                    String replacement = foundMatch + "\n        submenu.addPanel(\"/com/openbravo/images/reports.png\", \"Menu.PaymentSummary\", \"/com/openbravo/reports/sales_paymentsummary.bs\");";
-                    String newContent = content.replace(foundMatch, replacement);
-                    new PreparedSentence(this.m_appview.getSession(), "UPDATE RESOURCES SET CONTENT = ? WHERE NAME = ?", new SerializerWriteBasic(Datas.STRING, Datas.STRING)).exec(new Object[]{newContent, "Menu.Root"});
+                }
+            }
+            
+            // Auto-add "Gastos de Gerencia"
+            if (content != null && !content.contains("com.openbravo.pos.panels.JPanelGlobalExpenses")) {
+                Pattern p = Pattern.compile("(submenu|group)\\.addPanel\\s*\\([^{};]*\"com\\.openbravo\\.pos\\.panels\\.JPanelCloseMoney\"\\s*\\);");
+                Matcher m = p.matcher(content);
+                if (m.find()) {
+                    String found = m.group();
+                    String prefix = m.group(1);
+                    String replace = found + "\n        " + prefix + ".addPanel(\"\", \"Gastos de Gerencia\", \"com.openbravo.pos.panels.JPanelGlobalExpenses\");";
+                    content = content.replace(found, replace);
+                    new PreparedSentence(this.m_appview.getSession(), "UPDATE RESOURCES SET CONTENT = ? WHERE NAME = ?", new SerializerWriteBasic(Datas.STRING, Datas.STRING)).exec(new Object[]{content, "Menu.Root"});
+                }
+            }
+
+            // Auto-add "Ingreso de Mercancia"
+            if (content != null && !content.contains("com.openbravo.pos.inventory.JPanelMerchandiseEntry")) {
+                Pattern p = Pattern.compile("(submenu|group)\\.addPanel\\s*\\([^{};]*\"com\\.openbravo\\.pos\\.panels\\.JPanelCloseMoney\"\\s*\\);");
+                Matcher m = p.matcher(content);
+                if (m.find()) {
+                    String found = m.group();
+                    String prefix = m.group(1);
+                    String replace = found + "\n        " + prefix + ".addPanel(\"\", \"Ingreso de Mercancia\", \"com.openbravo.pos.inventory.JPanelMerchandiseEntry\");";
+                    replace += "\n        " + prefix + ".addPanel(\"\", \"Aprobacion de Ingresos\", \"com.openbravo.pos.inventory.JPanelMerchandiseAdmin\");";
+                    content = content.replace(found, replace);
+                    new PreparedSentence(this.m_appview.getSession(), "UPDATE RESOURCES SET CONTENT = ? WHERE NAME = ?", new SerializerWriteBasic(Datas.STRING, Datas.STRING)).exec(new Object[]{content, "Menu.Root"});
                 }
             }
             this.autoUpdatePermissions();
@@ -391,10 +413,38 @@ implements AppUserView {
         String permissions;
         String roleId = this.m_appuser.getRole();
         Object[] val = (Object[])new PreparedSentence<String, Object[]>(this.m_appview.getSession(), "SELECT PERMISSIONS FROM ROLES WHERE ID = ?", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.BYTES})).find((Object)roleId);
-        if (val != null && val[0] != null && !(permissions = new String((byte[])val[0])).contains(permissionKey = "/com/openbravo/reports/sales_paymentsummary.bs") && permissions.endsWith("</permissions>")) {
-            String newPermissions = permissions.substring(0, permissions.length() - 14) + "\n    <class name=\"" + permissionKey + "\"/>\n</permissions>";
-            new PreparedSentence(this.m_appview.getSession(), "UPDATE ROLES SET PERMISSIONS = ? WHERE ID = ?", new SerializerWriteBasic(Datas.BYTES, Datas.STRING)).exec(new Object[]{newPermissions.getBytes(), roleId});
-            this.m_appuser.fillPermissions(this.m_dlSystem);
+        if (val != null && val[0] != null && (permissions = new String((byte[])val[0])).endsWith("</permissions>")) {
+            boolean changed = false;
+            String newPermissions = permissions;
+            
+            // Permiso para reporte de pagos
+            if (!newPermissions.contains("/com/openbravo/reports/sales_paymentsummary.bs")) {
+                newPermissions = newPermissions.substring(0, newPermissions.length() - 14) + "\n    <class name=\"/com/openbravo/reports/sales_paymentsummary.bs\"/>\n</permissions>";
+                changed = true;
+            }
+            
+            // Permiso para Gastos de Gerencia
+            if (!newPermissions.contains("com.openbravo.pos.panels.JPanelGlobalExpenses")) {
+                newPermissions = newPermissions.substring(0, newPermissions.length() - 14) + "\n    <class name=\"com.openbravo.pos.panels.JPanelGlobalExpenses\"/>\n</permissions>";
+                changed = true;
+            }
+            
+            // Permiso para Ingreso de Mercancía
+            if (!newPermissions.contains("com.openbravo.pos.inventory.JPanelMerchandiseEntry")) {
+                newPermissions = newPermissions.substring(0, newPermissions.length() - 14) + "\n    <class name=\"com.openbravo.pos.inventory.JPanelMerchandiseEntry\"/>\n</permissions>";
+                changed = true;
+            }
+            
+            // Permiso para Aprobación de Ingresos
+            if (!newPermissions.contains("com.openbravo.pos.inventory.JPanelMerchandiseAdmin")) {
+                newPermissions = newPermissions.substring(0, newPermissions.length() - 14) + "\n    <class name=\"com.openbravo.pos.inventory.JPanelMerchandiseAdmin\"/>\n</permissions>";
+                changed = true;
+            }
+            
+            if (changed) {
+                new PreparedSentence(this.m_appview.getSession(), "UPDATE ROLES SET PERMISSIONS = ? WHERE ID = ?", new SerializerWriteBasic(Datas.BYTES, Datas.STRING)).exec(new Object[]{newPermissions.getBytes(), roleId});
+                this.m_appuser.fillPermissions(this.m_dlSystem);
+            }
         }
     }
 

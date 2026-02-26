@@ -2616,31 +2616,94 @@ TicketsEditor {
     }
 
     private void j_btnRemotePrtActionPerformed(ActionEvent evt) {
-        if (this.m_oTicket != null) {
-            for (int x = 0; x < this.m_oTicket.getLinesCount(); ++x) {
-                this.m_oTicket.getLine(x).setProperty("kitchen_printed", "true");
+        if (this.m_oTicket == null || this.m_oTicket.getLinesCount() == 0) {
+            return;
+        }
+        
+        System.out.println("cocina: === JAVA SendOrder START === lines=" + this.m_oTicket.getLinesCount());
+        
+        // Collect info about which printers need triggering and which lines are new
+        boolean[] printerNeeded = new boolean[6]; // P1-P6
+        java.util.List<TicketLineInfo> allLines = this.m_oTicket.getLines();
+        
+        // Pre-initialize sendstatus for new lines
+        for (int idx = 0; idx < allLines.size(); idx++) {
+            TicketLineInfo line = allLines.get(idx);
+            String status = line.getProperty("sendstatus");
+            if (status == null) {
+                line.setProperty("sendstatus", "No");
+                status = "No";
+            }
+            String prt = line.getProperty("product.printer");
+            System.out.println("cocina: Line " + idx + " (" + line.getProductName() + ") printer=" + prt + " status=" + status);
+            
+            if (prt != null && "No".equals(status)) {
+                try {
+                    int printerIdx = Integer.parseInt(prt) - 1;
+                    if (printerIdx >= 0 && printerIdx < 6) {
+                        printerNeeded[printerIdx] = true;
+                    }
+                } catch (NumberFormatException e) { /* ignore */ }
             }
         }
-        String rScript = this.dlSystem.getResourceAsText("script.SendOrder");
-        Interpreter i = new Interpreter();
-        try {
-            i.set("ticket", (Object)this.m_oTicket);
-            i.set("place", this.m_oTicketExt);
-            i.set("user", (Object)this.m_App.getAppUserView().getUser());
-            i.set("sales", (Object)this);
-            i.set("pickupid", this.m_oTicket.getPickupId());
-            i.set("pickupid", this.m_oTicket.getPickupId());
-            Object object = i.eval(rScript);
+        
+        // Print using a COPY of the ticket with only unsent lines (never modifies original)
+        String[] printerNames = {"Printer.Ticket.P1", "Printer.Ticket.P2", "Printer.Ticket.P3",
+                                  "Printer.Ticket.P4", "Printer.Ticket.P5", "Printer.Ticket.P6"};
+        for (int p = 0; p < 6; p++) {
+            if (!printerNeeded[p]) continue;
+            
+            String printerNum = String.valueOf(p + 1);
+            
+            // Build filtered list: only unsent lines for this printer
+            java.util.List<TicketLineInfo> filteredLines = new java.util.ArrayList<>();
+            for (TicketLineInfo line : allLines) {
+                String prt = line.getProperty("product.printer");
+                String status = line.getProperty("sendstatus");
+                if (printerNum.equals(prt) && "No".equals(status)) {
+                    filteredLines.add(line);
+                }
+            }
+            
+            if (filteredLines.isEmpty()) continue;
+            
+            System.out.println("cocina: Triggering " + printerNames[p] + " with " + filteredLines.size() + " NEW lines");
+            
+            // Create a copy of the ticket for printing — original ticket is untouched
+            TicketInfo printCopy = this.m_oTicket.copyTicket();
+            printCopy.setLines(filteredLines);
+            
+            // Print using the copy (3-arg method sends directly to printer)
+            this.printTicket(printerNames[p], printCopy, this.m_oTicketExt);
         }
-        catch (EvalError ex) {
+        
+        // Mark all lines as sent
+        for (TicketLineInfo line : allLines) {
+             line.setProperty("sendstatus", "Yes");
+        }
+        
+        // Persist the updated ticket to DB so sendstatus survives table switches
+        try {
+            if (this.m_oTicketExt != null && this.dlReceipts != null) {
+                if (this.m_oTicket.getUser() == null) {
+                    this.m_oTicket.setUser(new com.openbravo.pos.ticket.UserInfo(this.m_App.getAppUserView().getUser().getId(), this.m_App.getAppUserView().getUser().getName()));
+                }
+                
+                String sharedId = this.m_oTicket.getProperty("table.id");
+                if (sharedId == null) {
+                    sharedId = this.m_oTicketExt.toString();
+                }
+                
+                if (sharedId != null) {
+                    this.dlReceipts.updateSharedTicket(sharedId, this.m_oTicket, this.m_oTicket.getPickupId());
+                    System.out.println("cocina: Persisted sendstatus to DB for sharedId=" + sharedId);
+                }
+            }
+        } catch (BasicException ex) {
             Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // Marcar sendstatus FUERA del try-catch para que siempre se ejecute
-        if (this.m_oTicket != null) {
-            for (int x = 0; x < this.m_oTicket.getLinesCount(); ++x) {
-                this.m_oTicket.getLine(x).setProperty("sendstatus", "Yes");
-            }
-        }
+        
+        System.out.println("cocina: === JAVA SendOrder END ===");
         this.refreshTicket();
     }
 

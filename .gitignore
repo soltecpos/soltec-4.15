@@ -1,6 +1,9 @@
 # Installer executables
 installers/*.exe
 installers/*.zip
+*.exe
+*.zip
+*.jar
 
 # Java build
 build/
@@ -15,3 +18,18 @@ target/
 
 # Logs
 *.log
+
+# Heavy dependencies and extracted tools
+HeidiSQL/
+temp_*/
+smartpos*/
+webswing*/
+web-bridge/
+INI-RDPWRAP-master/
+
+# Sub-projects built outputs or heavy deps
+SOLTEC WEB/jre/
+SOLTEC WEB/node_modules/
+SOLTEC WEB/.next/
+SOLTEC WEB/dist/
+soltec configuracion/

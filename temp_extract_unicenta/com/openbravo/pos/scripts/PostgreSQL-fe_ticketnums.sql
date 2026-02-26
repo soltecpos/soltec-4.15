@@ -1,4 +1,0 @@
-CREATE SEQUENCE ticketsnum_fe START WITH 1;
-CREATE SEQUENCE ticketsnum_pose START WITH 1;
-CREATE SEQUENCE ticketsnum_noc START WITH 1;
-CREATE SEQUENCE ticketsnum_docs START WITH 1;

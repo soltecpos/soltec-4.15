@@ -1,8 +1,0 @@
-CREATE TABLE ticketsnum_fe (ID INT NOT NULL) ENGINE = InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO ticketsnum_fe (ID) VALUES (1);
-CREATE TABLE ticketsnum_pose (ID INT NOT NULL) ENGINE = InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO ticketsnum_pose (ID) VALUES (1);
-CREATE TABLE ticketsnum_noc (ID INT NOT NULL) ENGINE = InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO ticketsnum_noc (ID) VALUES (1);
-CREATE TABLE ticketsnum_docs (ID INT NOT NULL) ENGINE = InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO ticketsnum_docs (ID) VALUES (1);

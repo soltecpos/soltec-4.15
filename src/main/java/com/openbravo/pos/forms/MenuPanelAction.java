@@ -26,8 +26,15 @@ extends AbstractAction {
     }
 
     public MenuPanelAction(AppView app, String icon, String keytext, String sMyView) {
-        this.putValue("SmallIcon", safeIcon(icon));
-        this.putValue("Name", AppLocal.getIntString(keytext));
+        if (icon != null && !icon.isEmpty()) {
+            this.putValue("SmallIcon", safeIcon(icon));
+        }
+        // If keytext starts with "Menu." it's a localization key; otherwise use as-is
+        if (keytext != null && keytext.startsWith("Menu.")) {
+            this.putValue("Name", AppLocal.getIntString(keytext));
+        } else {
+            this.putValue("Name", keytext);
+        }
         this.putValue("taskname", sMyView);
         this.m_App = app;
         this.m_sMyView = sMyView;

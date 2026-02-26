@@ -830,6 +830,54 @@ extends BeanFactoryDataSingle {
         new com.openbravo.data.loader.PreparedSentence(this.s, "UPDATE inventory_task_lines SET COUNTED_QTY = ?, DIFFERENCE = ? WHERE TASK_ID = ? AND PRODUCT_ID = ?", new com.openbravo.data.loader.SerializerWriteBasic(com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.DOUBLE, com.openbravo.data.loader.Datas.STRING, com.openbravo.data.loader.Datas.STRING)).exec(new Object[]{countedQty, difference, taskId, productId});
     }
 
+    public final List<ProductInfoExt> searchProductsByName(String partialName) throws BasicException {
+        return new PreparedSentence<String, ProductInfoExt>(this.s, "SELECT ID, REFERENCE, CODE, CODETYPE, NAME, PRICEBUY, PRICESELL, CATEGORY, TAXCAT, ATTRIBUTESET_ID, STOCKCOST, STOCKVOLUME, IMAGE, ISCOM, ISSCALE, ISCONSTANT, PRINTKB, SENDSTATUS, ISSERVICE, ATTRIBUTES, DISPLAY, ISVPRICE, ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS, PRINTTO, SUPPLIER, UOM FROM products WHERE UPPER(NAME) LIKE ? ORDER BY NAME", SerializerWriteString.INSTANCE, ProductInfoExt.getSerializerRead()).list("%" + partialName.toUpperCase() + "%");
+    }
+
+    public final void insertMerchandiseReceipt(String id, String person, String notes) throws BasicException {
+        new PreparedSentence(this.s, "INSERT INTO merchandise_receipts (ID, PERSON, STATUS, NOTES) VALUES (?, ?, 'PENDING', ?)", new SerializerWriteBasic(Datas.STRING, Datas.STRING, Datas.STRING)).exec(new Object[]{id, person, notes});
+    }
+
+    public final void insertMerchandiseReceiptLine(String id, String receiptId, String productId, double units, String notes) throws BasicException {
+        new PreparedSentence(this.s, "INSERT INTO merchandise_receipt_lines (ID, RECEIPT_ID, PRODUCT_ID, UNITS, NOTES) VALUES (?, ?, ?, ?, ?)", new SerializerWriteBasic(Datas.STRING, Datas.STRING, Datas.STRING, Datas.DOUBLE, Datas.STRING)).exec(new Object[]{id, receiptId, productId, units, notes});
+    }
+
+    public final List<Object[]> getPendingMerchandiseReceipts() throws BasicException {
+        return new PreparedSentence(this.s, "SELECT ID, DATENEW, PERSON, STATUS, NOTES FROM merchandise_receipts WHERE STATUS = 'PENDING' ORDER BY DATENEW DESC", null, new SerializerReadBasic(new Datas[]{Datas.STRING, Datas.TIMESTAMP, Datas.STRING, Datas.STRING, Datas.STRING})).list();
+    }
+
+    public final List<Object[]> getMerchandiseReceiptLines(String receiptId) throws BasicException {
+        return new PreparedSentence(this.s, "SELECT L.ID, L.RECEIPT_ID, L.PRODUCT_ID, L.UNITS, L.NOTES, P.NAME FROM merchandise_receipt_lines L JOIN products P ON L.PRODUCT_ID = P.ID WHERE L.RECEIPT_ID = ?", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.STRING, Datas.STRING, Datas.STRING, Datas.DOUBLE, Datas.STRING, Datas.STRING})).list(receiptId);
+    }
+
+    public final void approveMerchandiseReceipt(final String receiptId, final String location, final String user) throws BasicException {
+        new SentenceExecTransaction<Object>(this.s) {
+            @Override
+            public int execInTransaction(Object params) throws BasicException {
+                List<Object[]> lines = getMerchandiseReceiptLines(receiptId);
+                for (Object[] line : lines) {
+                    Object[] sdRecord = new Object[9];
+                    sdRecord[0] = UUID.randomUUID().toString();
+                    sdRecord[1] = new Date();
+                    sdRecord[2] = 1; // IN_PURCHASE
+                    sdRecord[3] = location;
+                    sdRecord[4] = (String) line[2];
+                    sdRecord[5] = null;
+                    sdRecord[6] = (Double) line[3];
+                    sdRecord[7] = 0.0;
+                    sdRecord[8] = user;
+                    DataLogicSales.this.getStockDiaryInsert().exec(sdRecord);
+                }
+                new PreparedSentence(DataLogicSales.this.s, "UPDATE merchandise_receipts SET STATUS = 'APPROVED' WHERE ID = ?", SerializerWriteString.INSTANCE).exec(receiptId);
+                return 1;
+            }
+        }.exec(null);
+    }
+
+    public final void rejectMerchandiseReceipt(String receiptId) throws BasicException {
+        new PreparedSentence(this.s, "UPDATE merchandise_receipts SET STATUS = 'REJECTED' WHERE ID = ?", SerializerWriteString.INSTANCE).exec(receiptId);
+    }
+
     public void updatePlaceCoordinates(String id, int x, int y) throws BasicException {
         new SentenceExecTransaction<Object[]>(this.s){
 

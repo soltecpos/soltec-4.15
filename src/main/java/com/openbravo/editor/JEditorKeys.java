@@ -389,12 +389,15 @@ implements EditorKeys {
     }
 
     private void m_txtKeysKeyTyped(KeyEvent evt) {
+        char c = evt.getKeyChar();
+        // Always fire action on Enter, even if no editor is active (for password confirm)
+        if (c == '\n') {
+            this.fireActionPerformed();
+            return;
+        }
         if (this.editorcurrent != null) {
             this.m_txtKeys.setText("0");
-            char c = evt.getKeyChar();
-            if (c == '\n') {
-                this.fireActionPerformed();
-            } else if (this.keysavailable == null) {
+            if (this.keysavailable == null) {
                 this.editorcurrent.typeChar(c);
             } else {
                 for (int i = 0; i < this.keysavailable.length; ++i) {

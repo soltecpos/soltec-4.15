@@ -1,0 +1,51 @@
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+# TailscaleHostsSectionStart
+# This section contains MagicDNS entries for Tailscale.
+# Do not edit this section manually.
+
+100.89.96.112 desktop-1iv25la.tail26f916.ts.net. desktop-1iv25la
+100.89.231.68 desktop-5ct4udt.tail26f916.ts.net. desktop-5ct4udt
+100.111.117.72 desktop-5pcq483.tail26f916.ts.net. desktop-5pcq483
+100.94.153.80 desktop-774iq0k.tail26f916.ts.net. desktop-774iq0k
+100.86.12.93 desktop-7qvoc96.tail26f916.ts.net. desktop-7qvoc96
+100.124.182.68 desktop-9cnrhji.tail26f916.ts.net. desktop-9cnrhji
+100.86.140.57 desktop-b0n11jv.tail26f916.ts.net. desktop-b0n11jv
+100.92.50.10 desktop-bnvmli0.tail26f916.ts.net. desktop-bnvmli0
+100.70.194.93 desktop-di70ve2.tail26f916.ts.net. desktop-di70ve2
+100.110.151.76 desktop-ed066ha.tail26f916.ts.net. desktop-ed066ha
+100.80.132.29 desktop-k4hernc.tail26f916.ts.net. desktop-k4hernc
+100.75.152.117 desktop-l1vhvnm.tail26f916.ts.net. desktop-l1vhvnm
+100.113.148.97 desktop-lpn54rl.tail26f916.ts.net. desktop-lpn54rl
+100.75.218.22 desktop-nonook3.tail26f916.ts.net. desktop-nonook3
+100.94.13.26 desktop-ps9ajph.tail26f916.ts.net. desktop-ps9ajph
+100.122.59.83 desktop-tdodhj5.tail26f916.ts.net. desktop-tdodhj5
+100.116.253.6 desktop-ugvav5d.tail26f916.ts.net. desktop-ugvav5d
+100.72.154.97 espinalpos.tail26f916.ts.net. espinalpos
+100.104.143.32 guamopos.tail26f916.ts.net. guamopos
+100.125.213.119 ipad-pro-12-9-6th-gen-wificellular.tail26f916.ts.net. ipad-pro-12-9-6th-gen-wificellular
+100.82.150.39 puripos.tail26f916.ts.net. puripos
+100.68.110.80 saldapos.tail26f916.ts.net. saldapos
+100.69.151.114 samsung-sm-s928b.tail26f916.ts.net. samsung-sm-s928b
+100.101.109.68 soltec.tail26f916.ts.net. soltec
+
+# TailscaleHostsSectionEnd

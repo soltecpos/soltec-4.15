@@ -148,6 +148,13 @@ implements EditorComponent {
 
             @Override
             public void keyTyped(KeyEvent evt) {
+                // Enter key should trigger the editor keys action (e.g. confirm password)
+                if (evt.getKeyChar() == '\n' && JEditorAbstract.this.editorkeys != null) {
+                    if (JEditorAbstract.this.editorkeys instanceof com.openbravo.editor.JEditorKeys) {
+                        ((com.openbravo.editor.JEditorKeys) JEditorAbstract.this.editorkeys).fireActionPerformed();
+                    }
+                    return;
+                }
                 JEditorAbstract.this.typeChar(evt.getKeyChar());
             }
         });
