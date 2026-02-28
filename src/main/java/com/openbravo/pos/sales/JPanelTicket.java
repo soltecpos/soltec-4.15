@@ -1488,6 +1488,45 @@ TicketsEditor {
             MessageInf msg = new MessageInf(-33554432, AppLocal.getIntString("message.cannotprintticket"));
             msg.show(this);
         } else {
+            // Patch: replace hardcoded placeholder headers with dynamic property-based headers
+            if (sresource.contains("introduzca nombre del negocio")) {
+                String dynamicHeaders =
+                    "\t#if (${ticket.printTicketHeaderLine1()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine1()}</text>\n\t</line>\n" +
+                    "\t#end\n" +
+                    "\t#if (${ticket.printTicketHeaderLine2()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine2()}</text>\n\t</line>\n" +
+                    "\t#end\n" +
+                    "\t#if (${ticket.printTicketHeaderLine3()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine3()}</text>\n\t</line>\n" +
+                    "\t#end\n" +
+                    "\t#if (${ticket.printTicketHeaderLine4()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine4()}</text>\n\t</line>\n" +
+                    "\t#end\n" +
+                    "\t#if (${ticket.printTicketHeaderLine5()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine5()}</text>\n\t</line>\n" +
+                    "\t#end\n" +
+                    "\t#if (${ticket.printTicketHeaderLine6()} != \"\")\n" +
+                    "\t<line>\n\t\t<text align=\"center\" length=\"42\">${ticket.printTicketHeaderLine6()}</text>\n\t</line>\n" +
+                    "\t#end\n";
+                // Remove each hardcoded placeholder line
+                sresource = sresource.replaceAll("(?m)^.*introduzca nombre del negocio.*$\\n?", "");
+                sresource = sresource.replaceAll("(?m)^.*introduzca el nit de su negocio.*$\\n?", "");
+                sresource = sresource.replaceAll("(?m)^.*introduzca la direccion de su negocio.*$\\n?", "");
+                sresource = sresource.replaceAll("(?m)^.*introduzca el telefono de domicilios.*$\\n?", "");
+                sresource = sresource.replaceAll("(?m)^.*introduzca resolucion de fe.*$\\n?", "");
+                // Remove any now-empty <line></line> tags left around the placeholders
+                sresource = sresource.replaceAll("(?m)^\\s*<line>\\s*</line>\\s*\\n(?=\\s*<line>\\s*</line>)", "");
+                // Insert dynamic headers after the first <line></line> following <image>
+                int imgIdx = sresource.indexOf("</image>");
+                if (imgIdx > 0) {
+                    int emptyLine = sresource.indexOf("<line></line>", imgIdx);
+                    if (emptyLine > 0) {
+                        int insertPos = sresource.indexOf("\n", emptyLine) + 1;
+                        sresource = sresource.substring(0, insertPos) + dynamicHeaders + sresource.substring(insertPos);
+                    }
+                }
+            }
             if (ticket.getPickupId() == 0) {
                 try {
                     ticket.setPickupId(this.dlSales.getNextPickupIndex());

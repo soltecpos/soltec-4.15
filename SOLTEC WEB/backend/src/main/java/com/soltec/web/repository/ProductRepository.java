@@ -11,7 +11,11 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
 
-    List<Product> findByCategoryId(String categoryId);
+    @Query("SELECT p FROM Product p WHERE p.category = :category")
+    List<Product> findByCategory(@Param("category") Category category);
+
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findByCategoryId(@Param("categoryId") String categoryId);
 
     List<Product> findByNameContainingIgnoreCase(String name);
 

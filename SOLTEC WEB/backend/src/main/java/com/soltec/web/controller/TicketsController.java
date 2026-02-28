@@ -29,6 +29,7 @@ public class TicketsController {
     @Autowired private ReceiptRepository receiptRepository;
     @Autowired private ProductRepository productRepository;
     @Autowired private PersonRepository personRepository;
+    @Autowired private TaxRepository taxRepository;
 
     @GetMapping("/open")
     public List<Map<String, Object>> getOpenTickets() {
@@ -211,6 +212,57 @@ public class TicketsController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Deserialization error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/addline")
+    public ResponseEntity<?> addLine(@PathVariable String id, @RequestBody com.soltec.web.dto.AddLineRequest req) {
+        Optional<SharedTicket> shared = sharedTicketRepository.findById(id);
+        if (!shared.isPresent()) return ResponseEntity.notFound().build();
+
+        Product product = productRepository.findById(req.getProductId()).orElse(null);
+        if (product == null) return ResponseEntity.badRequest().body("Product not found");
+
+        Tax taxEntity = taxRepository.findById(product.getTaxcatId()).orElse(null);
+        com.openbravo.pos.ticket.TaxInfo taxInfo = null;
+        if (taxEntity != null) {
+            taxInfo = new com.openbravo.pos.ticket.TaxInfo(
+                taxEntity.getId(), taxEntity.getName(), taxEntity.getCategoryId(),
+                taxEntity.getCustcategory(), taxEntity.getParentid(),
+                taxEntity.getRate(), taxEntity.isRatecascade(), taxEntity.getRateorder() == null ? 0 : taxEntity.getRateorder()
+            );
+        }
+
+        SharedTicket st = shared.get();
+        if (st.getContent() == null) return ResponseEntity.badRequest().body("Empty order slot");
+
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(st.getContent());
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
+            TicketInfo ti = (TicketInfo) ois.readObject();
+
+            com.openbravo.pos.ticket.TicketLineInfo newLine = new com.openbravo.pos.ticket.TicketLineInfo(
+                    product.getId(), req.getQuantity(), product.getPricesell(), taxInfo
+            );
+            newLine.setProperty("product.name", product.getName());
+            newLine.setProperty("product.taxcategoryid", product.getTaxcatId());
+            if (product.getCategoryId() != null) {
+                newLine.setProperty("product.categoryid", product.getCategoryId());
+            }
+            newLine.setProperty("product.printer", product.getPrintto() != null ? product.getPrintto() : "1");
+
+            ti.addLine(newLine);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(ti);
+            oos.flush();
+            st.setContent(bos.toByteArray());
+            sharedTicketRepository.save(st);
+
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error appending line: " + e.getMessage());
         }
     }
 }

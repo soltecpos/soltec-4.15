@@ -100,7 +100,7 @@ Externalizable {
         this.m_aLines = new ArrayList<TicketLineInfo>();
         this.payments = new ArrayList<PaymentInfo>();
         this.m_sResponse = null;
-        AppConfig config = new AppConfig(new File(new File(System.getProperty("user.home")), "soltecpos.properties"));
+        AppConfig config = new AppConfig(new File(new File(System.getProperty("user.home")), "soltec.properties"));
         config.load();
         this.tip = Boolean.valueOf(config.getProperty("machine.showTip"));
         this.m_isProcessed = false;
@@ -257,7 +257,7 @@ Externalizable {
     }
 
     public String getHost() {
-        AppConfig m_config_host = new AppConfig(new File(System.getProperty("user.home"), "soltecpos.properties"));
+        AppConfig m_config_host = new AppConfig(new File(System.getProperty("user.home"), "soltec.properties"));
         m_config_host.load();
         String machineHostname = m_config_host.getProperty("machine.hostname");
         m_config_host = null;
@@ -475,7 +475,7 @@ Externalizable {
     }
 
     public String printId() {
-        AppConfig m_config = new AppConfig(new File(System.getProperty("user.home"), "soltecpos.properties"));
+        AppConfig m_config = new AppConfig(new File(System.getProperty("user.home"), "soltec.properties"));
         m_config.load();
         String receiptSize = m_config.getProperty("till.receiptsize");
         String receiptPrefix = m_config.getProperty("till.receiptprefix");
@@ -564,7 +564,7 @@ Externalizable {
     }
 
     public String getTicketHeaderFooterData(String data) {
-        AppConfig m_config = new AppConfig(new File(System.getProperty("user.home"), "soltecpos.properties"));
+        AppConfig m_config = new AppConfig(new File(System.getProperty("user.home"), "soltec.properties"));
         m_config.load();
         String row = m_config.getProperty("tkt." + data);
         return row;
