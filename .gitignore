@@ -4,6 +4,7 @@ installers/*.zip
 *.exe
 *.zip
 *.jar
+!lib/**/*.jar
 
 # Java build
 build/
